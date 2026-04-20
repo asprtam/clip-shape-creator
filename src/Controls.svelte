@@ -1,0 +1,120 @@
+<script>
+    import { onMount } from 'svelte';
+    import helpers from './lib/helpers.svelte';
+    import storage from './storage.svelte';
+    import ControlPoint from "./ControlPoint.svelte";
+    import Checkbox from "./lib/Checkbox.svelte";
+
+    /** @type {HTMLInputElement} */
+    let inputWidth = $state();
+    /** @type {HTMLInputElement} */
+    let inputHeight = $state();
+    /** @type {HTMLInputElement} */
+    let inputOuterPadding = $state();
+    /** @type {HTMLInputElement} */
+    let inputGridSize = $state();
+    /** @type {HTMLInputElement} */
+    let inputScale = $state();
+
+    /** @param {Number} pos */
+    const handleClickAddPoint = (pos) => {
+        if(pos <= 0) {
+            storage.points.unshift({
+                xPositionType: 'percent',
+                yPositionType: 'percent',
+                pos: { x: 50, y: 50 },
+                with: { x: 50, y: 50 }
+            });
+        } else if(pos >= storage.points.length) {
+            storage.points.push({
+                xPositionType: 'percent',
+                yPositionType: 'percent',
+                pos: { x: 50, y: 50 },
+                with: { x: 50, y: 50 }
+            });
+        } else {
+            storage.points = storage.points.slice(0, pos).concat([{
+                xPositionType: 'percent',
+                yPositionType: 'percent',
+                pos: { x: 50, y: 50 },
+                with: { x: 50, y: 50 }
+            }]).concat(storage.points.slice(pos + 1));
+        }
+    }
+
+    onMount(() => {
+        helpers.createNumericInput(inputWidth, (val) => {
+            storage.imgSize.width = val;
+        }, storage.imgSize.width, false, 10);
+        helpers.createNumericInput(inputHeight, (val) => {
+            storage.imgSize.height = val;
+        }, storage.imgSize.height, false, 10);
+        helpers.createNumericInput(inputOuterPadding, (val) => {
+            storage.outerPadding = val;
+        }, storage.outerPadding, false, 0);
+        helpers.createNumericInput(inputGridSize, (val) => {
+            storage.gridSize = val;
+        }, storage.gridSize, false, 1);
+        helpers.createNumericInput(inputScale, (val) => {
+            storage.scale = val;
+        }, storage.scale, true, 0.1);
+    });
+</script>
+
+<section class="controlsContainer">
+    <div class="controlSection baseControls">
+        <p>Workspace</p>
+        <div class="entries">
+            <div class="controlEntry double">
+                <p>Box size</p>
+                <div class="controlBox titled">
+                    <p>Width:</p>
+                    <input bind:this={inputWidth} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                </div>
+                <div class="controlBox titled">
+                    <p>Height:</p>
+                    <input bind:this={inputHeight} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                </div>
+            </div>
+            <div class="controlEntry single">
+                <p>External work area size:</p>
+                <div class="controlBox">
+                    <input bind:this={inputOuterPadding} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                </div>
+            </div>
+            <div class="controlEntry double">
+                <p>Grid</p>
+                <div class="controlBox titled">
+                    <p>Grid size:</p>
+                    <input bind:this={inputGridSize} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                </div>
+                <div class="controlBox titled">
+                    <p>Grid visiblity:</p>
+                    <Checkbox bind:selected={storage.gridVisible}></Checkbox>
+                </div>
+            </div>
+            <div class="controlEntry single">
+                <p>Scale:</p>
+                <div class="controlBox">
+                    <input bind:this={inputScale} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                </div>
+            </div>
+            <div class="controlEntry single">
+                <p>Background:</p>
+                <div class="controlBox">
+                    <input bind:value={storage.bg} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="controlSection pointsControls">
+        <p>Points</p>
+        <div class="entries">
+            <button class="addBtn" onclick={() => { handleClickAddPoint(0) }}>+</button>
+            {#each storage.points as point, index }
+                <ControlPoint id={index}></ControlPoint>
+                <button class="addBtn" onclick={() => { handleClickAddPoint(index+1) }}>+</button>
+            {/each}
+        </div>
+    </div>
+</section>

@@ -1,0 +1,5 @@
+.dragging .controlsContainer, .dragging .controlsContainer * {
+    user-select: none;
+    pointer-events: none;
+    touch-action: none;
+}

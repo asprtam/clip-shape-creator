@@ -1,0 +1,175 @@
+:root {
+    --gridLineSize: 0.5px;
+    --gridBorderStyle: solid;
+    --gridBorderColor:cyan;
+    --pointSize: 15px;
+    --tooltipFontSize: 12px;
+    --tooltipPaddingX: 5px;
+    --tooltipPaddingY: 2px;
+    --tooltipArrowHeight: 10px;
+    --tooltipArrowWidth: 10px;
+}
+
+.canvasContainer.dragging {
+    cursor: grabbing;
+}
+
+.canvasContainer .container .gridLines {
+    opacity: 0.2;
+}
+
+.canvasContainer .container .gridLines, .canvasContainer .container .gridLines :is(.outer, .inner) {
+    user-select: none;
+    pointer-events: none;
+    touch-action: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+}
+
+.canvasContainer .container .viewImage {
+    user-select: none;
+    pointer-events: none;
+    touch-action: none;
+}
+
+.canvasContainer .container .gridLines .gridLine {
+    position: absolute;
+}
+
+.canvasContainer .container .gridLines .gridLine.x {
+    width: 100%;
+    left: 0px;
+    height: 0px;
+}
+
+.canvasContainer .container .gridLines .gridLine.x::before {
+    position: absolute;
+    content: '';
+    box-sizing: border-box;
+    width: 100%;
+    height: calc(var(--gridLineSize, 1px) / var(--scale, 1));
+    top: 50%;
+    transform: translateY(-50%);
+    left:0px;
+    border-bottom: var(--gridBorderColor, cyan) var(--gridBorderStyle, solid) calc(var(--gridLineSize, 1px) / var(--scale, 1));
+}
+
+.canvasContainer .container .gridLines .gridLine.y::before {
+    position: absolute;
+    content: '';
+    box-sizing: border-box;
+    height: 100%;
+    width: calc(var(--gridLineSize, 1px) / var(--scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    top:0px;
+    border-left: var(--gridBorderColor, cyan) var(--gridBorderStyle, solid) calc(var(--gridLineSize, 1px) / var(--scale, 1));
+}
+
+.canvasContainer .container .gridLines .gridLine.y {
+    height: 100%;
+    top: 0px;
+    width: 0px;
+}
+
+.canvasContainer .container .viewImage::after, .canvasContainer .container .viewImage.unclipped::before {
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    content: '';
+}
+
+.canvasContainer .container .viewImage.unclipped::before {
+    background: #383d43;
+}
+
+.canvasContainer .container .viewImage.unclipped::after {
+    opacity: 0.2;
+}
+
+.canvasContainer .container .viewImage::after {
+    background: var(--bg, url('https://files.wydawnictwodraco.pl/books/?file=_images/columbia_tlo0.svg'));
+    background-size: 100% 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.canvasContainer .container .viewImage.clipped::after {
+    clip-path: var(--clipShape, none);
+}
+
+.canvasContainer .container .canvasPoint {
+    width: calc(var(--pointSize, 15px) / var(--scale, 1));
+    height: calc(var(--pointSize, 15px) / var(--scale, 1));
+    position: absolute;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    transition: background 0.2s ease-in-out, border 0.2s ease-in-out;
+}
+
+.canvasContainer .container .canvasPoint .tooltip {
+    position: absolute;
+    top: calc(100% + calc(0px / var(--scale)));
+    left: 50%;
+    transform: translateX(calc(calc(calc(var(--tooltipPaddingX) + calc(var(--tooltipArrowWidth) / 2)) / var(--scale, 1)) * -1)) scale(0);
+    transform-origin: calc(calc(calc(var(--tooltipPaddingX) + calc(var(--tooltipArrowWidth) / 2)) / var(--scale, 1))) top;
+    user-select: none;
+    pointer-events: none;
+    touch-action: none;
+    white-space: nowrap;
+    font-size: calc(var(--tooltipFontSize, 12px) / var(--scale, 1));
+    color: #000;
+    background: rgba(255, 255, 255, 0.5);
+    padding: calc(calc(var(--tooltipPaddingY) + var(--tooltipArrowHeight)) / var(--scale, 1)) calc(var(--tooltipPaddingX) / var(--scale, 1)) calc(var(--tooltipPaddingY) / var(--scale, 1)) calc(var(--tooltipPaddingX) / var(--scale, 1));
+    clip-path: polygon(
+        0 100%, 
+        0 calc(var(--tooltipArrowHeight) / var(--scale, 1)),
+        calc(var(--tooltipPaddingX) / var(--scale, 1)) calc(var(--tooltipArrowHeight) / var(--scale, 1)),
+        calc(calc(var(--tooltipPaddingX) + calc(var(--tooltipArrowWidth) / 2)) / var(--scale)) 0,
+        calc(calc(var(--tooltipPaddingX) + var(--tooltipArrowWidth)) / var(--scale)) calc(var(--tooltipArrowHeight) / var(--scale, 1)),
+        100% calc(var(--tooltipArrowHeight) / var(--scale, 1)),
+        100% 100%);
+    transition: opacity 0.2s ease-in-out, transfrom 0.2s ease-in-out;
+    opacity: 0;
+}
+
+.canvasContainer:not(.dragging) .container .canvasPoint:hover .tooltip,
+.canvasContainer .container .canvasPoint.dragging .tooltip {
+    opacity: 1;
+    transform: translateX(calc(calc(calc(var(--tooltipPaddingX) + calc(var(--tooltipArrowWidth) / 2)) / var(--scale, 1)) * -1));
+}
+
+.canvasContainer .container .canvasPoint.point {
+    background: hsl(var(--hue, 0deg) 50% 50% / 0.7);
+}
+
+.canvasContainer .container .canvasPoint.with {
+    background: hsla(var(--hue, 0deg) 80% 30% / 0.7);
+    border: calc(2px / var(--scale, 1)) hsl(var(--hue, 0deg) 50% 50% / 0.7) solid;
+}
+
+.canvasContainer:not(.dragging) .container .canvasPoint {
+    cursor: grab;
+}
+
+.canvasContainer:not(.dragging) .container .canvasPoint.point:hover,
+.canvasContainer .container .canvasPoint.point.dragging {
+    background: hsl(var(--hue, 0deg) 50% 60%)
+}
+
+.canvasContainer:not(.dragging) .container .canvasPoint.with:hover,
+.canvasContainer .container .canvasPoint.with.dragging {
+    background: hsla(var(--hue, 0deg) 80% 30%);
+    border: calc(2px / var(--scale, 1)) hsl(var(--hue, 0deg) 50% 50%) solid;
+}
+
+/* .canvasContainer .container .canvasPoint.dragging {
+    left: var(--draggingLeft, 0px) !important;
+    top: var(--draggingTop, 0px) !important;
+} */
