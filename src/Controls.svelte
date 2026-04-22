@@ -1,9 +1,12 @@
 <script>
     import { onMount } from 'svelte';
     import helpers from './lib/helpers.svelte';
-    import storage from './storage.svelte';
+    import Storage from './storage.svelte';
     import ControlPoint from "./ControlPoint.svelte";
     import Checkbox from "./lib/Checkbox.svelte";
+
+    /** @type {{'storage': import('./storage.svelte.js').Storage}} */
+    let { storage = $bindable(null) } = $props(); 
 
     /** @type {HTMLInputElement} */
     let inputWidth = $state();
@@ -44,20 +47,20 @@
 
     onMount(() => {
         helpers.createNumericInput(inputWidth, (val) => {
-            storage.imgSize.width = val;
-        }, storage.imgSize.width, false, 10);
+            storage.settings.imgSize.width = val;
+        }, storage.settings.imgSize.width, false, 10);
         helpers.createNumericInput(inputHeight, (val) => {
-            storage.imgSize.height = val;
-        }, storage.imgSize.height, false, 10);
+            storage.settings.imgSize.height = val;
+        }, storage.settings.imgSize.height, false, 10);
         helpers.createNumericInput(inputOuterPadding, (val) => {
-            storage.outerPadding = val;
-        }, storage.outerPadding, false, 0);
+            storage.settings.outerPadding = val;
+        }, storage.settings.outerPadding, false, 0);
         helpers.createNumericInput(inputGridSize, (val) => {
-            storage.gridSize = val;
-        }, storage.gridSize, false, 1);
+            storage.settings.gridSize = val;
+        }, storage.settings.gridSize, false, 1);
         helpers.createNumericInput(inputScale, (val) => {
-            storage.scale = val;
-        }, storage.scale, true, 0.1);
+            storage.settings.scale = val;
+        }, storage.settings.scale, true, 0.1);
     });
 </script>
 
@@ -91,7 +94,7 @@
                     </div>
                     <div class="controlBox titled">
                         <p>Grid visiblity:</p>
-                        <Checkbox bind:selected={storage.gridVisible}></Checkbox>
+                        <Checkbox bind:selected={storage.settings.gridVisible}></Checkbox>
                     </div>
                     <p class="hint"><span class="hintTitle">Hint:</span> <span>hold</span> <span class="btnName"><span class="btnTextName">Shift</span> <span class="btnIcon">&#8679;</span></span> <span>while dragging to make points snap to grid.</span></p>
                 </div>
@@ -104,7 +107,7 @@
                 <div class="controlEntry single longInput">
                     <p>Background:</p>
                     <div class="controlBox">
-                        <input bind:value={storage.bg} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                        <input bind:value={storage.settings.bg} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
                     </div>
                 </div>
             </div>
@@ -116,7 +119,7 @@
             <div class="entries">
                 <button class="addBtn" onclick={() => { handleClickAddPoint(0) }}>+</button>
                 {#each storage.points as point, index }
-                    <ControlPoint id={index} hue='{Math.round(360/storage.points.length) * index}deg'></ControlPoint>
+                    <ControlPoint bind:storage={storage} id={index} hue='{Math.round(360/storage.points.length) * index}deg'></ControlPoint>
                     <button class="addBtn" onclick={() => { handleClickAddPoint(index+1) }}>+</button>
                 {/each}
             </div>

@@ -140,5 +140,4 @@ const helpers = {
         return (count * _multiplicity) / Math.pow(10, multiplicityFractions);
     }
 }
-
 export default helpers;

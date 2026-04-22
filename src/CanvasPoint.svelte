@@ -2,9 +2,8 @@
     import { onMount } from 'svelte';
     import { getPointCords } from "./lib/toShape.svelte";
     import helpers from './lib/helpers.svelte';
-    import { storage, derivedStorage } from './storage.svelte';
-    /** @type {{id: Number, isDragging: Boolean, type: 'point'|'with', isShiftPressed: Boolean}} */
-    let { id, isDragging = $bindable(false), type, isShiftPressed } = $props();
+    /** @type {{id: Number, isDragging: Boolean, type: 'point'|'with', isShiftPressed: Boolean, 'storage': import('./storage.svelte.js').Storage}} */
+    let { id, isDragging = $bindable(false), type, isShiftPressed, storage = $bindable(null) } = $props();
     let isThisDragging = $state(false);
     let hasEvent = { mousedown: false, mouseup: false, mousemove: false };
     /** @type {HTMLElement} */
@@ -22,11 +21,11 @@
             }
             switch(storage.points[id].xPositionType) {
                 case 'percent': {
-                    obj.left = storage.imgSize.width * (check.x / 100);
+                    obj.left = storage.settings.imgSize.width * (check.x / 100);
                     break;
                 }
                 case 'middle': {
-                    obj.left = (storage.imgSize.width/2) + check.x;
+                    obj.left = (storage.settings.imgSize.width/2) + check.x;
                     break;
                 }
                 case 'start': {
@@ -34,17 +33,17 @@
                     break;
                 }
                 case 'end': {
-                    obj.left = storage.imgSize.width + check.x;
+                    obj.left = storage.settings.imgSize.width + check.x;
                     break;
                 }
             }
             switch(storage.points[id].yPositionType) {
                 case 'percent': {
-                    obj.top = storage.imgSize.height * (check.y / 100);
+                    obj.top = storage.settings.imgSize.height * (check.y / 100);
                     break;
                 }
                 case 'middle': {
-                    obj.top = (storage.imgSize.height/2) + check.y;
+                    obj.top = (storage.settings.imgSize.height/2) + check.y;
                     break;
                 }
                 case 'start': {
@@ -52,7 +51,7 @@
                     break;
                 }
                 case 'end': {
-                    obj.top = storage.imgSize.height + check.y;
+                    obj.top = storage.settings.imgSize.height + check.y;
                     break;
                 }
             }
@@ -65,11 +64,11 @@
         if(storage.points[id]) {
             switch(storage.points[id].xPositionType) {
                 case 'percent': {
-                    obj.left = storage.imgSize.width * (storage.points[id].pos.x / 100);
+                    obj.left = storage.settings.imgSize.width * (storage.points[id].pos.x / 100);
                     break;
                 }
                 case 'middle': {
-                    obj.left = (storage.imgSize.width/2) + storage.points[id].pos.x;
+                    obj.left = (storage.settings.imgSize.width/2) + storage.points[id].pos.x;
                     break;
                 }
                 case 'start': {
@@ -77,17 +76,17 @@
                     break;
                 }
                 case 'end': {
-                    obj.left = storage.imgSize.width + storage.points[id].pos.x;
+                    obj.left = storage.settings.imgSize.width + storage.points[id].pos.x;
                     break;
                 }
             }
             switch(storage.points[id].yPositionType) {
                 case 'percent': {
-                    obj.top = storage.imgSize.height * (storage.points[id].pos.y / 100);
+                    obj.top = storage.settings.imgSize.height * (storage.points[id].pos.y / 100);
                     break;
                 }
                 case 'middle': {
-                    obj.top = (storage.imgSize.height/2) + storage.points[id].pos.y;
+                    obj.top = (storage.settings.imgSize.height/2) + storage.points[id].pos.y;
                     break;
                 }
                 case 'start': {
@@ -95,7 +94,7 @@
                     break;
                 }
                 case 'end': {
-                    obj.top = storage.imgSize.height + storage.points[id].pos.y;
+                    obj.top = storage.settings.imgSize.height + storage.points[id].pos.y;
                     break;
                 }
             }
@@ -154,57 +153,57 @@
      * @param {MouseEvent} e
      */
     const handleMousemove = (e) => {
-        let diffX = helpers.roundToFraction((e.clientX - prevClientPos.x)/storage.scale);
-        let diffY = helpers.roundToFraction((e.clientY - prevClientPos.y)/storage.scale);
+        let diffX = helpers.roundToFraction((e.clientX - prevClientPos.x)/storage.settings.scale);
+        let diffY = helpers.roundToFraction((e.clientY - prevClientPos.y)/storage.settings.scale);
         let newX = draggingStartPos.x;
         let newY = draggingStartPos.y;
         if(isShiftPressed) {
             switch(storage.points[id].xPositionType) {
                 case 'percent': {
-                    newX = helpers.roundToFraction((helpers.roundToMultiplicity((storage.imgSize.width * (draggingStartPos.x / 100)) + diffX, storage.gridSize) / storage.imgSize.width) * 100, 100);
+                    newX = helpers.roundToFraction((helpers.roundToMultiplicity((storage.settings.imgSize.width * (draggingStartPos.x / 100)) + diffX, storage.settings.gridSize) / storage.settings.imgSize.width) * 100, 100);
                     break;
                 }
                 case 'middle': {
-                    let half = storage.imgSize.width/2;
-                    newX = helpers.roundToMultiplicity(half + draggingStartPos.x + diffX, storage.gridSize) - half;
+                    let half = storage.settings.imgSize.width/2;
+                    newX = helpers.roundToMultiplicity(half + draggingStartPos.x + diffX, storage.settings.gridSize) - half;
                     break;
                 }
                 case 'start': {
-                    newX = helpers.roundToMultiplicity(draggingStartPos.x + diffX, storage.gridSize);
+                    newX = helpers.roundToMultiplicity(draggingStartPos.x + diffX, storage.settings.gridSize);
                     break;
                 }
                 case 'end': {
-                    newX = helpers.roundToMultiplicity(storage.imgSize.width + draggingStartPos.x + diffX, storage.gridSize) - storage.imgSize.width;
+                    newX = helpers.roundToMultiplicity(storage.settings.imgSize.width + draggingStartPos.x + diffX, storage.settings.gridSize) - storage.settings.imgSize.width;
                     break;
                 }
             }
             switch(storage.points[id].yPositionType) {
                 case 'percent': {
-                    newY = helpers.roundToFraction((helpers.roundToMultiplicity((storage.imgSize.height * (draggingStartPos.y / 100)) + diffY, storage.gridSize) / storage.imgSize.height) * 100, 100);
+                    newY = helpers.roundToFraction((helpers.roundToMultiplicity((storage.settings.imgSize.height * (draggingStartPos.y / 100)) + diffY, storage.settings.gridSize) / storage.settings.imgSize.height) * 100, 100);
                     break;
                 }
                 case 'middle': {
-                    let half = storage.imgSize.height/2;
-                    newY = helpers.roundToMultiplicity(half + draggingStartPos.y + diffY, storage.gridSize) - half;
+                    let half = storage.settings.imgSize.height/2;
+                    newY = helpers.roundToMultiplicity(half + draggingStartPos.y + diffY, storage.settings.gridSize) - half;
                     break;
                 }
                 case 'start': {
-                    newY = helpers.roundToMultiplicity(draggingStartPos.y + diffY, storage.gridSize);
+                    newY = helpers.roundToMultiplicity(draggingStartPos.y + diffY, storage.settings.gridSize);
                     break;
                 }
                 case 'end': {
-                    newY = helpers.roundToMultiplicity(storage.imgSize.height + draggingStartPos.y + diffY, storage.gridSize) - storage.imgSize.height;
+                    newY = helpers.roundToMultiplicity(storage.settings.imgSize.height + draggingStartPos.y + diffY, storage.settings.gridSize) - storage.settings.imgSize.height;
                     break;
                 }
             }
         } else {
             if(storage.points[id].xPositionType == 'percent') {
-                newX += helpers.roundToFraction((diffX/storage.imgSize.width)*100, 100);
+                newX += helpers.roundToFraction((diffX/storage.settings.imgSize.width)*100, 100);
             } else {
                 newX += diffX;
             }
             if(storage.points[id].yPositionType == 'percent') {
-                newY += helpers.roundToFraction((diffY/storage.imgSize.height)*100, 100);
+                newY += helpers.roundToFraction((diffY/storage.settings.imgSize.height)*100, 100);
             } else {
                 newY += diffX;
             }

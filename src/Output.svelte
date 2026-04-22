@@ -43,10 +43,6 @@
             return `<span class="error">Not enough points - minimum 2 points are required</span>`
         }
     });
-
-    $effect(() => {
-        $inspect(points, stylizedPath);
-    });
 </script>
 
 <section class="outputsContainer">

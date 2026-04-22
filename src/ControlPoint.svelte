@@ -2,10 +2,9 @@
     //@ts-ignore
     import { PositionTypes } from "./types.js";
     import helpers from './lib/helpers.svelte';
-    import storage from './storage.svelte';
     import { onMount } from "svelte";
-    /** @type {{id: Number, hue: String}} */
-    let { id, hue } = $props();
+    /** @type {{id: Number, hue: String, storage: import('./storage.svelte.js').Storage}} */
+    let { id, hue, storage = $bindable(null) } = $props();
 
     /** @type {HTMLInputElement} */
     let inputX = $state();

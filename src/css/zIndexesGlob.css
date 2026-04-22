@@ -33,3 +33,13 @@
     bottom: 0px;
     height: var(--footerHeight, 0px);
 }
+
+.cookieBanner {
+    z-index: 5;
+    position: fixed;
+    height: 100px;
+    width: 100%;
+    bottom: 0px;
+    left: 0px;
+    background: #000;
+}
