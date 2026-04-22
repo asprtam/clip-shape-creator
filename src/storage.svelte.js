@@ -2,7 +2,7 @@
 import { Creator } from "./types.js";
 
 const storage = $state({
-    bg: 'url(\'https://files.wydawnictwodraco.pl/books/?file=_images/columbia_tlo0.svg\')',
+    bg: 'url(\'https://free-images.com/lg/2b9d/bird_wildlife_sky_clouds.jpg\')',
     imgSize: { width: 100, height: 100 },
     outerPadding: 50,
     scale: 3,
@@ -28,11 +28,12 @@ const storage = $state({
             pos: { x: 100, y: 100 },
             with: { x: 100, y: 50 }
         }
-    ]
+    ],
+    history: []
 });
 
 const defaults = {
-    bg: 'url(\'https://files.wydawnictwodraco.pl/books/?file=_images/columbia_tlo0.svg\')',
+    bg: 'url(\'https://free-images.com/lg/2b9d/bird_wildlife_sky_clouds.jpg\')',
     imgSize: { width: 100, height: 100 },
     outerPadding: 50,
     scale: 3,
@@ -43,6 +44,9 @@ const defaults = {
 const derivedStorage = {
     canvasSize: (() => {
         return { width: storage.imgSize.width + (storage.outerPadding * 2), height: storage.imgSize.height + (storage.outerPadding * 2) };
+    })(),
+    points: (() => {
+        return storage.points;
     })()
 }
 export { storage, derivedStorage, defaults };

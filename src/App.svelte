@@ -1,9 +1,11 @@
 <script>
   import Canvas from "./Canvas.svelte";
   import Controls from "./Controls.svelte";
+  import Output from "./Output.svelte";
   import storage from './storage.svelte';
   import pointsToShape from "./lib/toShape.svelte";
   import { onMount } from "svelte";
+  import Footer from "./Footer.svelte";
 
   let isShiftPressed = $state(false);
   let isDragging = $state(false);
@@ -40,5 +42,7 @@
 
 <main class="{isDragging ? 'dragging' : ''}">
   <Controls></Controls>
+  <Output points={storage.points}></Output>
   <Canvas bind:isDragging={isDragging} isShiftPressed={isShiftPressed} clipPath={currentClipPath}></Canvas>
+  <Footer></Footer>
 </main>

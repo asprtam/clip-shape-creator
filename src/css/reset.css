@@ -5,9 +5,11 @@ body {
     outline: none;
     box-sizing: border-box;
     background: #23262a;
+    font-family: 'Ubuntu', 'Helvetica', 'Arial', sans-serif;
+    line-height: 1em;
 }
 
-body, body input {
+body, body :is(button, input, select) {
     color: #fff;
 }
 

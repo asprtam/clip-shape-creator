@@ -3,3 +3,267 @@
     pointer-events: none;
     touch-action: none;
 }
+
+.controlsContainer {
+    background: #2c3035;
+    box-sizing: border-box;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+}
+
+.controlsContainer .innerContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.controlsContainer .innerContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.controlsContainer .controlSection {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    overflow: hidden;
+}
+
+.controlsContainer .controlSection.pointsControls {
+    max-height: 100%;
+}
+
+.controlsContainer .controlSection.baseControls {
+    height: fit-content;
+    min-height: fit-content;
+}
+
+.controlsContainer .controlSection.baseControls .innerContainer {
+    height: fit-content;
+}
+
+.controlsContainer .controlSection > p {
+    width: 100%;
+    text-align: center;
+}
+
+.controlsContainer .entries {
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+}
+
+.controlsContainer .entries .controlEntry, .controlsContainer .entries .pointEntry {
+    position: relative;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: rgba(255, 255, 255, 0.4) 2px 2px 5px -2px inset, rgba(0, 0, 0, 0.5) -2px -2px 5px -2px inset;
+    display: flex;
+    column-gap: 5px;
+    row-gap: 5px;
+}
+
+.controlsContainer .entries .addBtn {
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    box-shadow: rgba(255, 255, 255, 0.2) -2px -2px 5px -2px inset, rgba(0, 0, 0, 0.5) 2px 2px 5px -2px inset;
+    font-size: 18px;
+    background: rgba(0, 0, 0, 0.1);
+    transition: background 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.controlsContainer .entries .addBtn:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.controlsContainer .entries .controlEntry {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.controlsContainer .entries .controlGroup {
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 10px;
+    row-gap: 5px;
+    flex-direction: column;
+    display: flex;
+    background: rgba(0, 0, 0, 0.05);
+    box-shadow: rgba(255, 255, 255, 0.2) -2px -2px 5px -2px inset, rgba(0, 0, 0, 0.5) 2px 2px 5px -2px inset;
+}
+
+.controlsContainer .entries .controlEntry, .controlsContainer .entries .controlGroup {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.controlsContainer .entries .controlEntry > p, .controlsContainer .entries .controlGroup > p {
+    font-size: 16px;
+}
+
+.controlsContainer .entries .controlEntry > * {
+    width: fit-content;
+}
+
+.controlsContainer .entries .controlEntry.double > p:first-child,
+.controlsContainer .entries .controlEntry > p.hint,
+.controlsContainer .entries .controlGroup > * {
+    width: 100%;
+}
+
+.controlsContainer .entries .controlEntry > p.hint {
+    margin-top: 5px;
+    font-size: 13px;
+    white-space: nowrap;
+    font-weight: 300;
+}
+
+.controlsContainer .entries .controlEntry > p.hint .hintTitle {
+    font-weight: 400;
+    color: #f8eebf;
+}
+
+.controlsContainer .entries .controlEntry > p.hint .btnName {
+    display: inline-block;
+    padding: 2px 4px;
+    font-size: 10px;
+    line-height: 10px;
+    box-shadow: rgba(255, 255, 255, 0.4) 1.5px 1.5px 1.5px -1px inset, rgba(0, 0, 0, 0.5) -1.5px -1.5px 1.5px -1px inset;
+    border-radius: 3px;
+    vertical-align: text-bottom;
+}
+
+.controlsContainer .entries .controlBox {
+    display: flex;
+    column-gap: 5px;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.controlsContainer .entries .controlBox :is(input, select):not([type="checkbox"]) {
+    box-sizing: border-box;
+    padding: 1px 5px;
+    box-shadow: rgba(255, 255, 255, 0.4) -2px -2px 5px -2px inset, rgba(0, 0, 0, 0.7) 2px 2px 5px -2px inset;
+    font-size: 12px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.25);
+    font-family: "Menlo Regular", "Menlo", 'Courier New', Courier, monospace;
+}
+
+.controlsContainer .entries .controlBox :is(input):not([type="checkbox"]) {
+    width: 50px;
+    text-align: center;
+}
+
+.controlsContainer .entries .controlBox select {
+    width: 100px;
+    text-align: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.controlsContainer .entries .controlBox p {
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.controlsContainer .entries p .unit {
+    opacity: 0.6;
+}
+
+.controlsContainer .entries .controlEntry.single.longInput .controlBox {
+    width: unset;
+    flex-grow: 100;
+}
+
+.controlsContainer .entries .controlEntry.single.longInput .controlBox :is(input):not([type="checkbox"]) {
+    width: 100%;
+}
+
+.checkboxContainer {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.checkboxContainer .checkboxFace {
+    user-select: none;
+    touch-action: none;
+    pointer-events: none;
+    box-shadow: rgba(0, 0, 0, 0.5) 2px 2px 4px -2px inset;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.checkboxContainer .checkboxFace::before, .checkboxContainer .checkboxFace::after {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    border-radius: 2px;
+}
+
+.checkboxContainer .checkboxFace::before {
+    box-shadow: rgba(255, 255, 255, 0.4) 2px 2px 3px -1px inset, rgba(0, 0, 0, 0.5) -2px -2px 3px -1px inset;
+    background: #7698c2;
+}
+
+.checkboxContainer .checkboxFace::after {
+    left: -1.5px;
+    top: 1px;
+    background: #fff;
+    --mask: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cstyle%3E .b, .c %7B fill: none; %7D .c %7B stroke: %23000; stroke-miterlimit: 10; stroke-width: 4px; %7D %3C/style%3E%3C/defs%3E%3Cpolyline class='c' points='11.57 12.24 18 23.92 29.63 3.5'/%3E%3C/svg%3E");
+    mask-image: var(--mask);
+    mask-position: center center;
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+    -webkit-mask-image: var(--mask);
+    -webkit-mask-position: center center;
+    -webkit-mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+}
+
+.checkboxContainer .checkboxFace.selected::before, .checkboxContainer .checkboxFace.selected::after {
+    opacity: 1;
+}
+
+.checkboxContainer .checkboxFace, .checkboxContainer input[type="checkbox"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+}
+
+.checkboxContainer input[type="checkbox"] {
+    opacity: 0;
+    cursor: pointer;
+}
+
+.controlsContainer .entries .pointEntry {
+    flex-direction: column;
+    row-gap: 5px;
+    background: hsla(var(--hue, 0deg) 100% 50% / 0.1);
+}
+
+.controlsContainer .entries .pointEntry > p:first-child {
+    color: hsl(var(--hue, 0deg) 80% 70%);
+}

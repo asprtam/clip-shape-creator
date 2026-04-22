@@ -10,12 +10,17 @@
     --tooltipArrowWidth: 10px;
 }
 
+.canvasContainer .container {
+    z-index: 1;
+}
+
 .canvasContainer.dragging {
     cursor: grabbing;
 }
 
 .canvasContainer .container .gridLines {
     opacity: 0.2;
+    z-index: 3;
 }
 
 .canvasContainer .container .gridLines, .canvasContainer .container .gridLines :is(.outer, .inner) {
@@ -84,6 +89,14 @@
     content: '';
 }
 
+.canvasContainer .container .viewImage.unclipped {
+    z-index: 1;
+}
+
+.canvasContainer .container .viewImage.clipped {
+    z-index: 2;
+}
+
 .canvasContainer .container .viewImage.unclipped::before {
     background: #383d43;
 }
@@ -101,6 +114,10 @@
 
 .canvasContainer .container .viewImage.clipped::after {
     clip-path: var(--clipShape, none);
+}
+
+.canvasContainer .container .points {
+    z-index: 4;
 }
 
 .canvasContainer .container .canvasPoint {
@@ -147,11 +164,13 @@
 
 .canvasContainer .container .canvasPoint.point {
     background: hsl(var(--hue, 0deg) 50% 50% / 0.7);
+    z-index: 2;
 }
 
-.canvasContainer .container .canvasPoint.with {
+.canvasContainer .container .canvasPoint:is(.with, .with2) {
     background: hsla(var(--hue, 0deg) 80% 30% / 0.7);
     border: calc(2px / var(--scale, 1)) hsl(var(--hue, 0deg) 50% 50% / 0.7) solid;
+    z-index: 3;
 }
 
 .canvasContainer:not(.dragging) .container .canvasPoint {
@@ -163,10 +182,29 @@
     background: hsl(var(--hue, 0deg) 50% 60%)
 }
 
-.canvasContainer:not(.dragging) .container .canvasPoint.with:hover,
-.canvasContainer .container .canvasPoint.with.dragging {
+.canvasContainer:not(.dragging) .container .canvasPoint:is(.with, .with2):hover,
+.canvasContainer .container .canvasPoint:is(.with, .with2).dragging {
     background: hsla(var(--hue, 0deg) 80% 30%);
     border: calc(2px / var(--scale, 1)) hsl(var(--hue, 0deg) 50% 50%) solid;
+}
+
+.canvasContainer .container .pointingLine {
+    position: absolute;
+    transform-origin: left top;
+    transform: rotateZ(var(--rotation, 0deg));
+    z-index: 1;
+}
+
+.canvasContainer .container .pointingLine::before {
+    position: absolute;
+    box-sizing: border-box;
+    width: 100%;
+    content: '';
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: calc(var(--gridLineSize, 1px) / var(--scale, 1));
+    border-bottom: hsl(var(--hue, 0deg) 50% 50% / 0.7) var(--gridBorderStyle, solid) calc(var(--gridLineSize, 1px) / var(--scale, 1));
 }
 
 /* .canvasContainer .container .canvasPoint.dragging {

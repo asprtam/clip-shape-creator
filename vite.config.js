@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [svelte()],
   build: {
     cssCodeSplit: true,
-    sourcemap: 'inline',
+    sourcemap: true,
     emptyOutDir: true,
     cssMinify: false,
   },

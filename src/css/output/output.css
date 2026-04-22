@@ -1,0 +1,64 @@
+.dragging .outputsContainer, .dragging .outputsContainer * {
+    user-select: none;
+    pointer-events: none;
+    touch-action: none;
+}
+
+.outputsContainer {
+    background: #31353a;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.outputsContainer .outputTextContainer {
+    box-sizing: border-box;
+    padding: 0 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    box-shadow: rgba(255, 255, 255, 0.2) -2px -2px 5px -2px inset, rgba(0, 0, 0, 0.5) 2px 2px 5px -2px inset;
+}
+
+.outputsContainer .outputText {
+    font-family: "Menlo Regular", "Menlo", 'Courier New', Courier, monospace;
+    font-size: 14px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.outputsContainer .outputText::-webkit-scrollbar {
+    display: none;
+}
+
+.outputsContainer .outputText .propName, .outputsContainer .outputText .end {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.outputsContainer .outputText .bracket {
+    color: #fff;
+}
+
+.outputsContainer .outputText .shape, .outputsContainer .outputText .command.close {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.outputsContainer .outputText .command:not(.close) {
+    color: hsl(var(--hue, 0deg) 70% 75%)
+}
+
+.outputsContainer .outputText .number {
+    color: hsl(var(--hue, 0deg) 100% 67%)
+}
+
+.outputsContainer .outputText .error {
+    color: red;
+}

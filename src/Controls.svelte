@@ -23,22 +23,22 @@
                 xPositionType: 'percent',
                 yPositionType: 'percent',
                 pos: { x: 50, y: 50 },
-                with: { x: 50, y: 50 }
+                with: { x: 50, y: 50 },
             });
         } else if(pos >= storage.points.length) {
             storage.points.push({
                 xPositionType: 'percent',
                 yPositionType: 'percent',
                 pos: { x: 50, y: 50 },
-                with: { x: 50, y: 50 }
+                with: { x: 50, y: 50 },
             });
         } else {
             storage.points = storage.points.slice(0, pos).concat([{
                 xPositionType: 'percent',
                 yPositionType: 'percent',
                 pos: { x: 50, y: 50 },
-                with: { x: 50, y: 50 }
-            }]).concat(storage.points.slice(pos + 1));
+                with: { x: 50, y: 50 },
+            }]).concat(storage.points.slice(pos));
         }
     }
 
@@ -64,57 +64,62 @@
 <section class="controlsContainer">
     <div class="controlSection baseControls">
         <p>Workspace</p>
-        <div class="entries">
-            <div class="controlEntry double">
-                <p>Box size</p>
-                <div class="controlBox titled">
-                    <p>Width:</p>
-                    <input bind:this={inputWidth} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+        <div class="innerContainer">
+            <div class="entries">
+                <div class="controlEntry double">
+                    <p>Box size</p>
+                    <div class="controlBox titled">
+                        <p>Width:</p>
+                        <input bind:this={inputWidth} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                    </div>
+                    <div class="controlBox titled">
+                        <p>Height:</p>
+                        <input bind:this={inputHeight} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                    </div>
                 </div>
-                <div class="controlBox titled">
-                    <p>Height:</p>
-                    <input bind:this={inputHeight} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                <div class="controlEntry single">
+                    <p>External work area size:</p>
+                    <div class="controlBox">
+                        <input bind:this={inputOuterPadding} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                    </div>
                 </div>
-            </div>
-            <div class="controlEntry single">
-                <p>External work area size:</p>
-                <div class="controlBox">
-                    <input bind:this={inputOuterPadding} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                <div class="controlEntry double">
+                    <p>Grid</p>
+                    <div class="controlBox titled">
+                        <p>Grid size:</p>
+                        <input bind:this={inputGridSize} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                    </div>
+                    <div class="controlBox titled">
+                        <p>Grid visiblity:</p>
+                        <Checkbox bind:selected={storage.gridVisible}></Checkbox>
+                    </div>
+                    <p class="hint"><span class="hintTitle">Hint:</span> <span>hold</span> <span class="btnName"><span class="btnTextName">Shift</span> <span class="btnIcon">&#8679;</span></span> <span>while dragging to make points snap to grid.</span></p>
                 </div>
-            </div>
-            <div class="controlEntry double">
-                <p>Grid</p>
-                <div class="controlBox titled">
-                    <p>Grid size:</p>
-                    <input bind:this={inputGridSize} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                <div class="controlEntry single">
+                    <p>Scale:</p>
+                    <div class="controlBox">
+                        <input bind:this={inputScale} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                    </div>
                 </div>
-                <div class="controlBox titled">
-                    <p>Grid visiblity:</p>
-                    <Checkbox bind:selected={storage.gridVisible}></Checkbox>
-                </div>
-            </div>
-            <div class="controlEntry single">
-                <p>Scale:</p>
-                <div class="controlBox">
-                    <input bind:this={inputScale} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-                </div>
-            </div>
-            <div class="controlEntry single">
-                <p>Background:</p>
-                <div class="controlBox">
-                    <input bind:value={storage.bg} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                <div class="controlEntry single longInput">
+                    <p>Background:</p>
+                    <div class="controlBox">
+                        <input bind:value={storage.bg} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="controlSection pointsControls">
         <p>Points</p>
-        <div class="entries">
-            <button class="addBtn" onclick={() => { handleClickAddPoint(0) }}>+</button>
-            {#each storage.points as point, index }
-                <ControlPoint id={index}></ControlPoint>
-                <button class="addBtn" onclick={() => { handleClickAddPoint(index+1) }}>+</button>
-            {/each}
+        <div class="innerContainer">
+            <div class="entries">
+                <button class="addBtn" onclick={() => { handleClickAddPoint(0) }}>+</button>
+                {#each storage.points as point, index }
+                    <ControlPoint id={index} hue='{Math.round(360/storage.points.length) * index}deg'></ControlPoint>
+                    <button class="addBtn" onclick={() => { handleClickAddPoint(index+1) }}>+</button>
+                {/each}
+            </div>
         </div>
     </div>
 </section>

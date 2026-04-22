@@ -4,8 +4,8 @@
     import helpers from './lib/helpers.svelte';
     import storage from './storage.svelte';
     import { onMount } from "svelte";
-    /** @type {{id: Number}} */
-    let { id } = $props();
+    /** @type {{id: Number, hue: String}} */
+    let { id, hue } = $props();
 
     /** @type {HTMLInputElement} */
     let inputX = $state();
@@ -99,7 +99,7 @@
     });
 </script>
 
-<div class="pointEntry">
+<div class="pointEntry" style="--hue: {hue};">
     <p>Point {id + 1}</p>
     <div class="controlGroup double">
         <p>Position</p>
@@ -134,20 +134,18 @@
             </div>
         </div>
     </div>
-    {#if id > 0}
-        <div class="controlGroup">
-            <p>Curve</p>
-            <div class="controlEntry double">
-                <div class="controlBox titled">
-                    <p>X/left <span class="unit">({storage.points[id].xPositionType == 'percent' ? 'in %' : 'in PXs'})</span>:</p>
-                    <input bind:this={inputXWith} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-                </div>
-                <div class="controlBox titled">
-                    <p>Y/top <span class="unit">({storage.points[id].yPositionType == 'percent' ? 'in %' : 'in PXs'})</span>:</p>
-                    <input bind:this={inputYWith} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-                </div>
+    <div class="controlGroup">
+        <p>Curve</p>
+        <div class="controlEntry double">
+            <div class="controlBox titled">
+                <p>X/left <span class="unit">({storage.points[id].xPositionType == 'percent' ? 'in %' : 'in PXs'})</span>:</p>
+                <input bind:this={inputXWith} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            </div>
+            <div class="controlBox titled">
+                <p>Y/top <span class="unit">({storage.points[id].yPositionType == 'percent' ? 'in %' : 'in PXs'})</span>:</p>
+                <input bind:this={inputYWith} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
             </div>
         </div>
-    {/if}
+    </div>
     <button class="removeBtn" onclick={handleRemove}>remove</button>
 </div>

@@ -60,6 +60,49 @@
         return obj;
     });
 
+    let pointingLineSize = $derived.by(() => {
+        let obj = { left: 0, top: 0 };
+        if(storage.points[id]) {
+            switch(storage.points[id].xPositionType) {
+                case 'percent': {
+                    obj.left = storage.imgSize.width * (storage.points[id].pos.x / 100);
+                    break;
+                }
+                case 'middle': {
+                    obj.left = (storage.imgSize.width/2) + storage.points[id].pos.x;
+                    break;
+                }
+                case 'start': {
+                    obj.left = storage.points[id].pos.x;
+                    break;
+                }
+                case 'end': {
+                    obj.left = storage.imgSize.width + storage.points[id].pos.x;
+                    break;
+                }
+            }
+            switch(storage.points[id].yPositionType) {
+                case 'percent': {
+                    obj.top = storage.imgSize.height * (storage.points[id].pos.y / 100);
+                    break;
+                }
+                case 'middle': {
+                    obj.top = (storage.imgSize.height/2) + storage.points[id].pos.y;
+                    break;
+                }
+                case 'start': {
+                    obj.top = storage.points[id].pos.y;
+                    break;
+                }
+                case 'end': {
+                    obj.top = storage.imgSize.height + storage.points[id].pos.y;
+                    break;
+                }
+            }
+        }
+        return { width: realPositon.left - obj.left, height: realPositon.top - obj.top };
+    });
+
     let tooltipCords = $derived.by(() => {
         let obj = { x: '', y: '' };
         if(type == 'point') {
@@ -112,31 +155,64 @@
      */
     const handleMousemove = (e) => {
         let diffX = helpers.roundToFraction((e.clientX - prevClientPos.x)/storage.scale);
-        switch(storage.points[id].xPositionType) {
-            case 'percent': {
-                diffX = helpers.roundToFraction((diffX/storage.imgSize.width)*100);
-                break;
-            }
-        }
         let diffY = helpers.roundToFraction((e.clientY - prevClientPos.y)/storage.scale);
-        switch(storage.points[id].yPositionType) {
-            case 'percent': {
-                diffY = helpers.roundToFraction((diffY/storage.imgSize.height)*100);
-                break;
+        let newX = draggingStartPos.x;
+        let newY = draggingStartPos.y;
+        if(isShiftPressed) {
+            switch(storage.points[id].xPositionType) {
+                case 'percent': {
+                    newX = helpers.roundToFraction((helpers.roundToMultiplicity((storage.imgSize.width * (draggingStartPos.x / 100)) + diffX, storage.gridSize) / storage.imgSize.width) * 100, 100);
+                    break;
+                }
+                case 'middle': {
+                    let half = storage.imgSize.width/2;
+                    newX = helpers.roundToMultiplicity(half + draggingStartPos.x + diffX, storage.gridSize) - half;
+                    break;
+                }
+                case 'start': {
+                    newX = helpers.roundToMultiplicity(draggingStartPos.x + diffX, storage.gridSize);
+                    break;
+                }
+                case 'end': {
+                    newX = helpers.roundToMultiplicity(storage.imgSize.width + draggingStartPos.x + diffX, storage.gridSize) - storage.imgSize.width;
+                    break;
+                }
+            }
+            switch(storage.points[id].yPositionType) {
+                case 'percent': {
+                    newY = helpers.roundToFraction((helpers.roundToMultiplicity((storage.imgSize.height * (draggingStartPos.y / 100)) + diffY, storage.gridSize) / storage.imgSize.height) * 100, 100);
+                    break;
+                }
+                case 'middle': {
+                    let half = storage.imgSize.height/2;
+                    newY = helpers.roundToMultiplicity(half + draggingStartPos.y + diffY, storage.gridSize) - half;
+                    break;
+                }
+                case 'start': {
+                    newY = helpers.roundToMultiplicity(draggingStartPos.y + diffY, storage.gridSize);
+                    break;
+                }
+                case 'end': {
+                    newY = helpers.roundToMultiplicity(storage.imgSize.height + draggingStartPos.y + diffY, storage.gridSize) - storage.imgSize.height;
+                    break;
+                }
+            }
+        } else {
+            if(storage.points[id].xPositionType == 'percent') {
+                newX += helpers.roundToFraction((diffX/storage.imgSize.width)*100, 100);
+            } else {
+                newX += diffX;
+            }
+            if(storage.points[id].yPositionType == 'percent') {
+                newY += helpers.roundToFraction((diffY/storage.imgSize.height)*100, 100);
+            } else {
+                newY += diffX;
             }
         }
         if(type == 'point') {
-            if(isShiftPressed) {
-                storage.points[id].pos = { x: helpers.roundToMultiplicity(draggingStartPos.x + diffX, storage.gridSize), y: helpers.roundToMultiplicity(draggingStartPos.y + diffY, storage.gridSize) };
-            } else {
-                storage.points[id].pos = { x: draggingStartPos.x + diffX, y: draggingStartPos.y + diffY }
-            }
+            storage.points[id].pos = { x: newX, y: newY };
         } else {
-            if(isShiftPressed) {
-                storage.points[id].with = { x: helpers.roundToMultiplicity(draggingStartPos.x + diffX, storage.gridSize), y: helpers.roundToMultiplicity(draggingStartPos.y + diffY, storage.gridSize) };
-            } else {
-                storage.points[id].with = { x: draggingStartPos.x + diffX, y: draggingStartPos.y + diffY }
-            }
+            storage.points[id].with = { x: newX, y: newY };
         }
     }
 
@@ -183,9 +259,12 @@
     });
 </script>
 
-<div class="canvasPoint {type} {type}-{id}{isThisDragging ? ' dragging' : ''}" style="--hue: {Math.round(360/storage.points.length) * id}deg; left: {realPositon.left}px; top: {realPositon.top}px;{ type=='with' && id == 0 ? ' display: none !important;' : ''}" bind:this={element}>
+<div class="canvasPoint {type} {type}-{id}{isThisDragging ? ' dragging' : ''}" style="--hue: {Math.round(360/storage.points.length) * id}deg; left: {realPositon.left}px; top: {realPositon.top}px;" bind:this={element}>
     <div class="tooltip">
         <span class="x"><span class="cordType">x: </span><span class="value">{tooltipCords.x}</span></span>
         <span class="y"><span class="cordType">y: </span><span class="value">{tooltipCords.y}</span></span>
     </div>
 </div>
+{#if type == 'with'}
+    <div class="pointingLine pointingLine-{id}" style="--hue: {Math.round(360/storage.points.length) * id}deg; left: {realPositon.left}px; top: {realPositon.top}px; width: {Math.sqrt(Math.pow(pointingLineSize.width, 2) + Math.pow(pointingLineSize.height, 2))}px; --rotation: {((Math.atan2(pointingLineSize.height, pointingLineSize.width) * 180) / Math.PI) + 180}deg;"></div>
+{/if}

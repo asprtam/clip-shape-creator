@@ -13,7 +13,7 @@ const PositionTypes = { 'percent': 'Percents', 'middle': 'PX from middle', 'star
  * @property {xType & Creator.positionType} xPositionType
  * @property {yType & Creator.positionType} yPositionType
  * @property {{x: Number, y: Number}} pos
- * @property {{x: Number, y: Number}} [with]
+ * @property {{x: Number, y: Number}} with
  * @memberof Creator
  */
 
