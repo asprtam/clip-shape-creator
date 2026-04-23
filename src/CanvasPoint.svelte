@@ -1,10 +1,9 @@
 <script>
     import { onMount } from 'svelte';
-    import { getPointCords } from "./lib/toShape.svelte";
+    import { getPointCords, translateCords } from "./lib/toShape.svelte";
     import helpers from './lib/helpers.svelte';
-    import { storage, derivedStorage } from './storage.svelte';
-    /** @type {{id: Number, isDragging: Boolean, type: 'point'|'with', isShiftPressed: Boolean}} */
-    let { id, isDragging = $bindable(false), type, isShiftPressed } = $props();
+    /** @type {{id: Number, prevId: Number, nextId: Number, isDragging: Boolean, type: 'point'|'with', 'storage': import('./storage.svelte.js').Storage, btnPress: { shift: Boolean, ctrl: Boolean, alt: Boolean } }} */
+    let { id, prevId, nextId, isDragging = $bindable(false), type, storage = $bindable(null), btnPress } = $props();
     let isThisDragging = $state(false);
     let hasEvent = { mousedown: false, mouseup: false, mousemove: false };
     /** @type {HTMLElement} */
@@ -20,13 +19,13 @@
             if(type == 'with') {
                 check = storage.points[id].with;
             }
-            switch(storage.points[id].xPositionType) {
+            switch(check.xPositionType) {
                 case 'percent': {
-                    obj.left = storage.imgSize.width * (check.x / 100);
+                    obj.left = storage.settings.imgSize.width * (check.x / 100);
                     break;
                 }
                 case 'middle': {
-                    obj.left = (storage.imgSize.width/2) + check.x;
+                    obj.left = (storage.settings.imgSize.width/2) + check.x;
                     break;
                 }
                 case 'start': {
@@ -34,17 +33,17 @@
                     break;
                 }
                 case 'end': {
-                    obj.left = storage.imgSize.width + check.x;
+                    obj.left = storage.settings.imgSize.width + check.x;
                     break;
                 }
             }
-            switch(storage.points[id].yPositionType) {
+            switch(check.yPositionType) {
                 case 'percent': {
-                    obj.top = storage.imgSize.height * (check.y / 100);
+                    obj.top = storage.settings.imgSize.height * (check.y / 100);
                     break;
                 }
                 case 'middle': {
-                    obj.top = (storage.imgSize.height/2) + check.y;
+                    obj.top = (storage.settings.imgSize.height/2) + check.y;
                     break;
                 }
                 case 'start': {
@@ -52,7 +51,7 @@
                     break;
                 }
                 case 'end': {
-                    obj.top = storage.imgSize.height + check.y;
+                    obj.top = storage.settings.imgSize.height + check.y;
                     break;
                 }
             }
@@ -63,13 +62,13 @@
     let pointingLineSize = $derived.by(() => {
         let obj = { left: 0, top: 0 };
         if(storage.points[id]) {
-            switch(storage.points[id].xPositionType) {
+            switch(storage.points[id].pos.xPositionType) {
                 case 'percent': {
-                    obj.left = storage.imgSize.width * (storage.points[id].pos.x / 100);
+                    obj.left = storage.settings.imgSize.width * (storage.points[id].pos.x / 100);
                     break;
                 }
                 case 'middle': {
-                    obj.left = (storage.imgSize.width/2) + storage.points[id].pos.x;
+                    obj.left = (storage.settings.imgSize.width/2) + storage.points[id].pos.x;
                     break;
                 }
                 case 'start': {
@@ -77,17 +76,17 @@
                     break;
                 }
                 case 'end': {
-                    obj.left = storage.imgSize.width + storage.points[id].pos.x;
+                    obj.left = storage.settings.imgSize.width + storage.points[id].pos.x;
                     break;
                 }
             }
-            switch(storage.points[id].yPositionType) {
+            switch(storage.points[id].pos.yPositionType) {
                 case 'percent': {
-                    obj.top = storage.imgSize.height * (storage.points[id].pos.y / 100);
+                    obj.top = storage.settings.imgSize.height * (storage.points[id].pos.y / 100);
                     break;
                 }
                 case 'middle': {
-                    obj.top = (storage.imgSize.height/2) + storage.points[id].pos.y;
+                    obj.top = (storage.settings.imgSize.height/2) + storage.points[id].pos.y;
                     break;
                 }
                 case 'start': {
@@ -95,7 +94,50 @@
                     break;
                 }
                 case 'end': {
-                    obj.top = storage.imgSize.height + storage.points[id].pos.y;
+                    obj.top = storage.settings.imgSize.height + storage.points[id].pos.y;
+                    break;
+                }
+            }
+        }
+        return { width: realPositon.left - obj.left, height: realPositon.top - obj.top };
+    });
+
+    let pointingLinePrevPointSize = $derived.by(() => {
+        let obj = { left: 0, top: 0 };
+        if(storage.points[prevId]) {
+            switch(storage.points[prevId].pos.xPositionType) {
+                case 'percent': {
+                    obj.left = storage.settings.imgSize.width * (storage.points[prevId].pos.x / 100);
+                    break;
+                }
+                case 'middle': {
+                    obj.left = (storage.settings.imgSize.width/2) + storage.points[prevId].pos.x;
+                    break;
+                }
+                case 'start': {
+                    obj.left = storage.points[prevId].pos.x;
+                    break;
+                }
+                case 'end': {
+                    obj.left = storage.settings.imgSize.width + storage.points[prevId].pos.x;
+                    break;
+                }
+            }
+            switch(storage.points[prevId].pos.yPositionType) {
+                case 'percent': {
+                    obj.top = storage.settings.imgSize.height * (storage.points[prevId].pos.y / 100);
+                    break;
+                }
+                case 'middle': {
+                    obj.top = (storage.settings.imgSize.height/2) + storage.points[prevId].pos.y;
+                    break;
+                }
+                case 'start': {
+                    obj.top = storage.points[prevId].pos.y;
+                    break;
+                }
+                case 'end': {
+                    obj.top = storage.settings.imgSize.height + storage.points[prevId].pos.y;
                     break;
                 }
             }
@@ -106,7 +148,7 @@
     let tooltipCords = $derived.by(() => {
         let obj = { x: '', y: '' };
         if(type == 'point') {
-            let strPos = getPointCords(storage.points[id], true, '', '|');
+            let strPos = getPointCords(storage.points[id], storage.settings.imgSize, true, '', '|');
             if(strPos.split('|').length > 1) {
                 obj.x = strPos.split('|')[0];
                 obj.y = strPos.split('|')[1];
@@ -114,7 +156,7 @@
         } else {
             let point = JSON.parse(JSON.stringify(storage.points[id]));
             point.pos = point.with;
-            let strPos = getPointCords(point, true, '', '|');
+            let strPos = getPointCords(point, storage.settings.imgSize, true, '', '|');
             if(strPos.split('|').length > 1) {
                 obj.x = strPos.split('|')[0];
                 obj.y = strPos.split('|')[1];
@@ -154,65 +196,89 @@
      * @param {MouseEvent} e
      */
     const handleMousemove = (e) => {
-        let diffX = helpers.roundToFraction((e.clientX - prevClientPos.x)/storage.scale);
-        let diffY = helpers.roundToFraction((e.clientY - prevClientPos.y)/storage.scale);
+        let diffX = helpers.roundToFraction((e.clientX - prevClientPos.x)/storage.settings.scale);
+        let diffY = helpers.roundToFraction((e.clientY - prevClientPos.y)/storage.settings.scale);
         let newX = draggingStartPos.x;
         let newY = draggingStartPos.y;
-        if(isShiftPressed) {
-            switch(storage.points[id].xPositionType) {
+        let checkX = storage.points[id].pos.xPositionType;
+        let checkY = storage.points[id].pos.yPositionType;
+        if(type == 'with') {
+            checkX = storage.points[id].with.xPositionType;
+            checkY = storage.points[id].with.yPositionType;
+        }
+        if(btnPress.shift) {
+            switch(checkX) {
                 case 'percent': {
-                    newX = helpers.roundToFraction((helpers.roundToMultiplicity((storage.imgSize.width * (draggingStartPos.x / 100)) + diffX, storage.gridSize) / storage.imgSize.width) * 100, 100);
+                    newX = helpers.roundToFraction((helpers.roundToMultiplicity((storage.settings.imgSize.width * (draggingStartPos.x / 100)) + diffX, storage.settings.gridSize) / storage.settings.imgSize.width) * 100, 100);
                     break;
                 }
                 case 'middle': {
-                    let half = storage.imgSize.width/2;
-                    newX = helpers.roundToMultiplicity(half + draggingStartPos.x + diffX, storage.gridSize) - half;
+                    let half = storage.settings.imgSize.width/2;
+                    newX = helpers.roundToMultiplicity(half + draggingStartPos.x + diffX, storage.settings.gridSize) - half;
                     break;
                 }
                 case 'start': {
-                    newX = helpers.roundToMultiplicity(draggingStartPos.x + diffX, storage.gridSize);
+                    newX = helpers.roundToMultiplicity(draggingStartPos.x + diffX, storage.settings.gridSize);
                     break;
                 }
                 case 'end': {
-                    newX = helpers.roundToMultiplicity(storage.imgSize.width + draggingStartPos.x + diffX, storage.gridSize) - storage.imgSize.width;
+                    newX = helpers.roundToMultiplicity(storage.settings.imgSize.width + draggingStartPos.x + diffX, storage.settings.gridSize) - storage.settings.imgSize.width;
                     break;
                 }
             }
-            switch(storage.points[id].yPositionType) {
+            switch(checkY) {
                 case 'percent': {
-                    newY = helpers.roundToFraction((helpers.roundToMultiplicity((storage.imgSize.height * (draggingStartPos.y / 100)) + diffY, storage.gridSize) / storage.imgSize.height) * 100, 100);
+                    newY = helpers.roundToFraction((helpers.roundToMultiplicity((storage.settings.imgSize.height * (draggingStartPos.y / 100)) + diffY, storage.settings.gridSize) / storage.settings.imgSize.height) * 100, 100);
                     break;
                 }
                 case 'middle': {
-                    let half = storage.imgSize.height/2;
-                    newY = helpers.roundToMultiplicity(half + draggingStartPos.y + diffY, storage.gridSize) - half;
+                    let half = storage.settings.imgSize.height/2;
+                    newY = helpers.roundToMultiplicity(half + draggingStartPos.y + diffY, storage.settings.gridSize) - half;
                     break;
                 }
                 case 'start': {
-                    newY = helpers.roundToMultiplicity(draggingStartPos.y + diffY, storage.gridSize);
+                    newY = helpers.roundToMultiplicity(draggingStartPos.y + diffY, storage.settings.gridSize);
                     break;
                 }
                 case 'end': {
-                    newY = helpers.roundToMultiplicity(storage.imgSize.height + draggingStartPos.y + diffY, storage.gridSize) - storage.imgSize.height;
+                    newY = helpers.roundToMultiplicity(storage.settings.imgSize.height + draggingStartPos.y + diffY, storage.settings.gridSize) - storage.settings.imgSize.height;
                     break;
                 }
             }
         } else {
-            if(storage.points[id].xPositionType == 'percent') {
-                newX += helpers.roundToFraction((diffX/storage.imgSize.width)*100, 100);
+            if(checkX == 'percent') {
+                newX += helpers.roundToFraction((diffX/storage.settings.imgSize.width)*100, 100);
             } else {
                 newX += diffX;
             }
-            if(storage.points[id].yPositionType == 'percent') {
-                newY += helpers.roundToFraction((diffY/storage.imgSize.height)*100, 100);
+            if(checkY == 'percent') {
+                newY += helpers.roundToFraction((diffY/storage.settings.imgSize.height)*100, 100);
             } else {
-                newY += diffX;
+                newY += diffY;
             }
         }
         if(type == 'point') {
-            storage.points[id].pos = { x: newX, y: newY };
+            if(!btnPress.alt) {
+                let translatedWith = translateCords(storage.points[id].with, { xPositionType: checkX, yPositionType: checkY }, storage.settings.imgSize);
+                if(translatedWith.x == storage.points[id].pos.x && translatedWith.y == storage.points[id].pos.y) {
+                    storage.points[id].with = translateCords({ x: newX, y: newY, xPositionType: checkX, yPositionType: checkY }, { xPositionType: storage.points[id].with.xPositionType, yPositionType: storage.points[id].with.yPositionType }, storage.settings.imgSize);
+                }
+                if(storage.points[prevId]) {
+                    let translatedWithPrev = translateCords(storage.points[prevId].with, { xPositionType: checkX, yPositionType: checkY });
+                    if(translatedWithPrev.x == storage.points[id].pos.x && translatedWithPrev.y == storage.points[id].pos.y) {
+                        storage.points[prevId].with = translateCords({ x: newX, y: newY, xPositionType: checkX, yPositionType: checkY }, { xPositionType: storage.points[prevId].with.xPositionType, yPositionType: storage.points[prevId].with.yPositionType }, storage.settings.imgSize);
+                    }
+                }
+                if(prevId != nextId && storage.points[nextId]) {
+                    let translatedWithNext = translateCords(storage.points[nextId].with, { xPositionType: checkX, yPositionType: checkY });
+                    if(translatedWithNext.x == storage.points[id].pos.x && translatedWithNext.y == storage.points[id].pos.y) {
+                        storage.points[nextId].with = translateCords({ x: newX, y: newY, xPositionType: checkX, yPositionType: checkY }, { xPositionType: storage.points[nextId].with.xPositionType, yPositionType: storage.points[nextId].with.yPositionType }, storage.settings.imgSize);
+                    }
+                }
+            }
+            storage.points[id].pos = { x: newX, y: newY, xPositionType: checkX, yPositionType: checkY };
         } else {
-            storage.points[id].with = { x: newX, y: newY };
+            storage.points[id].with = { x: newX, y: newY, xPositionType: checkX, yPositionType: checkY };
         }
     }
 
@@ -266,5 +332,6 @@
     </div>
 </div>
 {#if type == 'with'}
+    <div class="pointingLine prevPoint pointingLine-prevPoint-{id}" style="--hue: {Math.round(360/storage.points.length) * id}deg; --hue2: {Math.round(360/storage.points.length) * prevId}deg; left: {realPositon.left}px; top: {realPositon.top}px; width: {Math.sqrt(Math.pow(pointingLinePrevPointSize.width, 2) + Math.pow(pointingLinePrevPointSize.height, 2))}px; --rotation: {((Math.atan2(pointingLinePrevPointSize.height, pointingLinePrevPointSize.width) * 180) / Math.PI) + 180}deg;"></div>
     <div class="pointingLine pointingLine-{id}" style="--hue: {Math.round(360/storage.points.length) * id}deg; left: {realPositon.left}px; top: {realPositon.top}px; width: {Math.sqrt(Math.pow(pointingLineSize.width, 2) + Math.pow(pointingLineSize.height, 2))}px; --rotation: {((Math.atan2(pointingLineSize.height, pointingLineSize.width) * 180) / Math.PI) + 180}deg;"></div>
 {/if}

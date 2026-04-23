@@ -1,0 +1,80 @@
+.cookieBanner .innerContent {
+    position: absolute;
+    width: 100%;
+    height: var(--cookieBannerHeight, 0px);
+    top: 0px;
+    left: 0px;
+    box-sizing: border-box;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+    background: #262b30;
+    row-gap: 10px;
+}
+
+.cookieBanner .innerContent::before {
+    position: absolute;
+    width: calc(100% - 30px);
+    height: calc(100% - 30px);
+    content: '';
+    user-select: none;
+    pointer-events: none;
+    touch-action: none;
+    left: 15px;
+    top: 15px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: rgba(255, 255, 255, 0.2) -2px -2px 5px -2px inset, rgba(0, 0, 0, 0.5) 2px 2px 5px -2px inset;
+}
+
+.cookieBanner .innerContent p {
+    text-align: left;
+    color: #dae0e7;
+}
+
+.cookieBanner .innerContent p .bracket {
+    color: #b1b9c2;
+}
+
+.cookieBanner .innerContent p .misc {
+    color: #8f9ba8;
+}
+
+.cookieBanner .innerContent p, .cookieBanner .innerContent .btnsRow {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+.cookieBanner .innerContent .btnsRow {
+    display: flex;
+    column-gap: 10px;
+}
+
+.cookieBanner .innerContent .btnsRow button {
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 2px 10px;
+    box-shadow: rgba(255, 255, 255, 0.4) 2px 2px 5px -2px inset, rgba(0, 0, 0, 0.5) -2px -2px 5px -2px inset;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.cookieBanner .innerContent .btnsRow button.accept {
+    background: hsla(120deg 100% 70% / 0.3);
+}
+
+.cookieBanner .innerContent .btnsRow button.accept:hover {
+    background: hsla(120deg 100% 75% / 0.4);
+}
+
+.cookieBanner .innerContent .btnsRow button.decline {
+    background: hsla(0deg 100% 70% / 0.3);
+}
+
+.cookieBanner .innerContent .btnsRow button.decline:hover {
+    background: hsla(0deg 100% 75% / 0.4);
+}

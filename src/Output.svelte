@@ -2,17 +2,18 @@
     //@ts-ignore
     import { Creator } from "./types.js";
     import { getPointCords } from "./lib/toShape.svelte.js";
-    /** @type {{points: Array<Creator.point<Creator.positionType, Creator.positionType>>}} */
-    let { points } = $props();
+    /** @type {{points: Array<Creator.point<Creator.positionType, Creator.positionType>>, imgSize: {width: Number, height: Number}}} */
+    let { points, imgSize } = $props();
     
     let stylizedPath = $derived.by(() => {
         if(points.length > 1) {
             let huePart = Math.round(360/points.length);
             let path = `<span class="shape">shape</span><span class="bracket">(</span><span class="command from" style="--hue: ${(points.length - 1) * huePart}deg;">from</span> `;
-            path += getPointCords(points[points.length - 1], true, '', ' ', undefined, '', `<span class="number" style="--hue: ${(points.length - 1) * huePart}deg;">`, '</span>');
+            path += getPointCords(points[points.length - 1], imgSize, true, '', ' ', undefined, '', `<span class="number" style="--hue: ${(points.length - 1) * huePart}deg;">`, '</span>');
             path += ', ';
             path += getPointCords(
                 points[0],
+                imgSize,
                 false,
                 `<span class="command line" style="--hue: 0deg;">line to</span> `,
                 ' ',
@@ -27,6 +28,7 @@
                 let currentHue = huePart * i;
                 path += getPointCords(
                     points[i],
+                    imgSize,
                     false,
                     `<span class="command line" style="--hue: ${currentHue}deg;">line to</span> `,
                     ' ',
@@ -42,10 +44,6 @@
         } else {
             return `<span class="error">Not enough points - minimum 2 points are required</span>`
         }
-    });
-
-    $effect(() => {
-        $inspect(points, stylizedPath);
     });
 </script>
 

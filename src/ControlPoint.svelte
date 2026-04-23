@@ -1,11 +1,12 @@
 <script>
     //@ts-ignore
-    import { PositionTypes } from "./types.js";
+    import { PositionTypes, Creator } from "./types.js";
+    import { translateCords } from "./lib/toShape.svelte";
     import helpers from './lib/helpers.svelte';
-    import storage from './storage.svelte';
     import { onMount } from "svelte";
-    /** @type {{id: Number, hue: String}} */
-    let { id, hue } = $props();
+    import { localisationTexts } from "./lib/localisationTexts.svelte";
+    /** @type {{id: Number, hue: String, storage: import('./storage.svelte.js').Storage}} */
+    let { id, hue, storage = $bindable(null) } = $props();
 
     /** @type {HTMLInputElement} */
     let inputX = $state();
@@ -28,6 +29,37 @@
     
     const handleRemove = () => {
         storage.points = storage.points.slice(0, id).concat(storage.points.slice(id + 1));
+    }
+
+    // svelte-ignore state_referenced_locally
+    let posXpositionType = $state(storage.points[id].pos.xPositionType);
+    // svelte-ignore state_referenced_locally
+    let posYpositionType = $state(storage.points[id].pos.yPositionType);
+    // svelte-ignore state_referenced_locally
+    let withXpositionType = $state(storage.points[id].with.xPositionType);
+    // svelte-ignore state_referenced_locally
+    let withYpositionType = $state(storage.points[id].with.yPositionType);
+
+    /**
+     * @param {HTMLSelectElement} element
+     * @param {Boolean} pos
+     * @param {Boolean} xOrY
+     * @param {Creator.positionType} toType
+     */
+    const handleChangeCalcType = (element, pos, xOrY, toType) => {
+        if(pos) {
+            if(xOrY) {
+                storage.points[id].pos = translateCords(storage.points[id].pos, { xPositionType: toType, yPositionType: storage.points[id].pos.yPositionType }, storage.settings.imgSize);
+            } else {
+                storage.points[id].pos = translateCords(storage.points[id].pos, { xPositionType: storage.points[id].pos.xPositionType, yPositionType: toType }, storage.settings.imgSize);
+            }
+        } else {
+            if(xOrY) {
+                storage.points[id].with = translateCords(storage.points[id].with, { xPositionType: toType, yPositionType: storage.points[id].with.yPositionType }, storage.settings.imgSize);
+            } else {
+                storage.points[id].with = translateCords(storage.points[id].with, { xPositionType: storage.points[id].with.xPositionType, yPositionType: toType }, storage.settings.imgSize);
+            }
+        }
     }
 
     $effect(() => {
@@ -100,20 +132,20 @@
 </script>
 
 <div class="pointEntry" style="--hue: {hue};">
-    <p>Point {id + 1}</p>
+    <p>{localisationTexts.controls.point} {id + 1}</p>
     <div class="controlGroup double">
-        <p>Position</p>
+        <p>{localisationTexts.controls.position}</p>
         <div class="controlEntry double">
             <p>X/left:</p>
             <div class="controlBox titled">
-                <p>Value <span class="unit">({storage.points[id].xPositionType == 'percent' ? 'in %' : 'in PXs'})</span>:</p>
+                <p>{localisationTexts.controls.value} <span class="unit">({storage.points[id].pos.xPositionType == 'percent' ? localisationTexts.controls.inPercents : localisationTexts.controls.inPx})</span>:</p>
                 <input bind:this={inputX} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
             </div>
             <div class="controlBox titled">
-                <p>Calculation type:</p>
-                <select bind:value={storage.points[id].xPositionType}>
+                <p>{localisationTexts.controls.calcType}:</p>
+                <select bind:value={posXpositionType} onchange={() => { handleChangeCalcType(this, true, true, posXpositionType) }}>
                     {#each Object.keys(PositionTypes) as type}
-                        <option value={type}>{PositionTypes[type]}</option>
+                        <option value={type}>{localisationTexts.calcTypes[type]}</option>
                     {/each}
                 </select>
             </div>
@@ -121,31 +153,51 @@
         <div class="controlEntry double">
             <p>Y/top:</p>
             <div class="controlBox titled">
-                <p>Value <span class="unit">({storage.points[id].yPositionType == 'percent' ? 'in %' : 'in PXs'})</span>:</p>
+                <p>{localisationTexts.controls.value} <span class="unit">({storage.points[id].pos.yPositionType == 'percent' ? localisationTexts.controls.inPercents : localisationTexts.controls.inPx})</span>:</p>
                 <input bind:this={inputY} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
             </div>
             <div class="controlBox titled">
-                <p>Calculation type:</p>
-                <select bind:value={storage.points[id].yPositionType}>
+                <p>{localisationTexts.controls.calcType}:</p>
+                <select bind:value={posYpositionType} onchange={() => { handleChangeCalcType(this, true, false, posYpositionType) }}>
                     {#each Object.keys(PositionTypes) as type}
-                        <option value={type}>{PositionTypes[type]}</option>
+                        <option value={type}>{localisationTexts.calcTypes[type]}</option>
                     {/each}
                 </select>
             </div>
         </div>
     </div>
-    <div class="controlGroup">
-        <p>Curve</p>
+    <div class="controlGroup double">
+        <p>{localisationTexts.controls.curve}</p>
         <div class="controlEntry double">
+            <p>X/left:</p>
             <div class="controlBox titled">
-                <p>X/left <span class="unit">({storage.points[id].xPositionType == 'percent' ? 'in %' : 'in PXs'})</span>:</p>
+                <p>{localisationTexts.controls.value} <span class="unit">({storage.points[id].with.xPositionType == 'percent' ? localisationTexts.controls.inPercents : localisationTexts.controls.inPx})</span>:</p>
                 <input bind:this={inputXWith} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
             </div>
             <div class="controlBox titled">
-                <p>Y/top <span class="unit">({storage.points[id].yPositionType == 'percent' ? 'in %' : 'in PXs'})</span>:</p>
+                <p>{localisationTexts.controls.calcType}:</p>
+                <select bind:value={withXpositionType} onchange={() => { handleChangeCalcType(this, false, true, withXpositionType) }}>
+                    {#each Object.keys(PositionTypes) as type}
+                        <option value={type}>{localisationTexts.calcTypes[type]}</option>
+                    {/each}
+                </select>
+            </div>
+        </div>
+        <div class="controlEntry double">
+            <p>Y/top:</p>
+            <div class="controlBox titled">
+                <p>{localisationTexts.controls.value} <span class="unit">({storage.points[id].with.yPositionType == 'percent' ? localisationTexts.controls.inPercents : localisationTexts.controls.inPx})</span>:</p>
                 <input bind:this={inputYWith} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            </div>
+            <div class="controlBox titled">
+                <p>{localisationTexts.controls.calcType}:</p>
+                <select bind:value={withYpositionType} onchange={() => { handleChangeCalcType(this, false, false, withYpositionType) }}>
+                    {#each Object.keys(PositionTypes) as type}
+                        <option value={type}>{localisationTexts.calcTypes[type]}</option>
+                    {/each}
+                </select>
             </div>
         </div>
     </div>
-    <button class="removeBtn" onclick={handleRemove}>remove</button>
+    <button class="removeBtn" onclick={handleRemove}><span>{localisationTexts.controls.remove}</span></button>
 </div>

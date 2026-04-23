@@ -80,7 +80,7 @@
     width: 0px;
 }
 
-.canvasContainer .container .viewImage::after, .canvasContainer .container .viewImage.unclipped::before {
+.canvasContainer .container .viewImage::after, .canvasContainer .container .viewImage::before {
     width: 100%;
     height: 100%;
     left: 0px;
@@ -97,22 +97,26 @@
     z-index: 2;
 }
 
-.canvasContainer .container .viewImage.unclipped::before {
+.canvasContainer .container .viewImage::before {
     background: #383d43;
 }
 
 .canvasContainer .container .viewImage.unclipped::after {
-    opacity: 0.2;
+    opacity: var(--opacity, 0.2);
+}
+
+.canvasContainer .container .viewImage.clipped::after {
+    opacity: var(--opacity, 1);
 }
 
 .canvasContainer .container .viewImage::after {
-    background: var(--bg, url('https://files.wydawnictwodraco.pl/books/?file=_images/columbia_tlo0.svg'));
+    background: var(--bg, #fff);
     background-size: 100% 100%;
     background-position: center center;
     background-repeat: no-repeat;
 }
 
-.canvasContainer .container .viewImage.clipped::after {
+.canvasContainer .container .viewImage.clipped:not(.noUnclipped)::before, .canvasContainer .container .viewImage.clipped::after {
     clip-path: var(--clipShape, none);
 }
 
@@ -164,13 +168,19 @@
 
 .canvasContainer .container .canvasPoint.point {
     background: hsl(var(--hue, 0deg) 50% 50% / 0.7);
+}
+
+:not(.controlPressed) .canvasContainer .container .canvasPoint.point, :is(.controlPressed) .canvasContainer .container .canvasPoint:is(.with, .with2) {
+    z-index: 3;
+}
+
+:not(.controlPressed) .canvasContainer .container .canvasPoint:is(.with, .with2), :is(.controlPressed) .canvasContainer .container .canvasPoint.point {
     z-index: 2;
 }
 
 .canvasContainer .container .canvasPoint:is(.with, .with2) {
     background: hsla(var(--hue, 0deg) 80% 30% / 0.7);
     border: calc(2px / var(--scale, 1)) hsl(var(--hue, 0deg) 50% 50% / 0.7) solid;
-    z-index: 3;
 }
 
 .canvasContainer:not(.dragging) .container .canvasPoint {
@@ -204,7 +214,7 @@
     top: 50%;
     transform: translateY(-50%);
     height: calc(var(--gridLineSize, 1px) / var(--scale, 1));
-    border-bottom: hsl(var(--hue, 0deg) 50% 50% / 0.7) var(--gridBorderStyle, solid) calc(var(--gridLineSize, 1px) / var(--scale, 1));
+    background: hsla(var(--hue, 0deg) 50% 50% / 0.7);
 }
 
 /* .canvasContainer .container .canvasPoint.dragging {

@@ -1,9 +1,13 @@
 <script>
     import { onMount } from 'svelte';
     import helpers from './lib/helpers.svelte';
-    import storage from './storage.svelte';
+    import Storage from './storage.svelte';
     import ControlPoint from "./ControlPoint.svelte";
     import Checkbox from "./lib/Checkbox.svelte";
+    import { localisationTexts } from "./lib/localisationTexts.svelte";
+
+    /** @type {{'storage': import('./storage.svelte.js').Storage}} */
+    let { storage = $bindable(null) } = $props(); 
 
     /** @type {HTMLInputElement} */
     let inputWidth = $state();
@@ -15,108 +19,131 @@
     let inputGridSize = $state();
     /** @type {HTMLInputElement} */
     let inputScale = $state();
+    /** @type {HTMLInputElement} */
+    let inputBgOpacity = $state();
+    /** @type {HTMLInputElement} */
+    let inputBgUnclippedOpacity = $state();
 
     /** @param {Number} pos */
     const handleClickAddPoint = (pos) => {
         if(pos <= 0) {
             storage.points.unshift({
-                xPositionType: 'percent',
-                yPositionType: 'percent',
-                pos: { x: 50, y: 50 },
-                with: { x: 50, y: 50 },
+                pos: { x: 50, y: 50, xPositionType: 'percent', yPositionType: 'percent', },
+                with: { x: 50, y: 50, xPositionType: 'percent', yPositionType: 'percent', },
             });
         } else if(pos >= storage.points.length) {
             storage.points.push({
-                xPositionType: 'percent',
-                yPositionType: 'percent',
-                pos: { x: 50, y: 50 },
-                with: { x: 50, y: 50 },
+                pos: { x: 50, y: 50, xPositionType: 'percent', yPositionType: 'percent', },
+                with: { x: 50, y: 50, xPositionType: 'percent', yPositionType: 'percent', },
             });
         } else {
             storage.points = storage.points.slice(0, pos).concat([{
-                xPositionType: 'percent',
-                yPositionType: 'percent',
-                pos: { x: 50, y: 50 },
-                with: { x: 50, y: 50 },
+                pos: { x: 50, y: 50, xPositionType: 'percent', yPositionType: 'percent', },
+                with: { x: 50, y: 50, xPositionType: 'percent', yPositionType: 'percent', },
             }]).concat(storage.points.slice(pos));
         }
     }
 
     onMount(() => {
         helpers.createNumericInput(inputWidth, (val) => {
-            storage.imgSize.width = val;
-        }, storage.imgSize.width, false, 10);
+            storage.settings.imgSize.width = Math.round(val);
+            inputWidth.value = `${Math.round(val)}`;
+        }, storage.settings.imgSize.width, false, 10);
         helpers.createNumericInput(inputHeight, (val) => {
-            storage.imgSize.height = val;
-        }, storage.imgSize.height, false, 10);
+            storage.settings.imgSize.height = Math.round(val);
+            inputHeight.value = `${Math.round(val)}`;
+        }, storage.settings.imgSize.height, false, 10);
         helpers.createNumericInput(inputOuterPadding, (val) => {
-            storage.outerPadding = val;
-        }, storage.outerPadding, false, 0);
+            storage.settings.outerPadding = Math.round(val);
+            inputOuterPadding.value = `${Math.round(val)}`;
+        }, storage.settings.outerPadding, false, 0);
         helpers.createNumericInput(inputGridSize, (val) => {
-            storage.gridSize = val;
-        }, storage.gridSize, false, 1);
+            storage.settings.gridSize = Math.round(val);
+            inputGridSize.value = `${Math.round(val)}`;
+        }, storage.settings.gridSize, false, 1);
         helpers.createNumericInput(inputScale, (val) => {
-            storage.scale = val;
-        }, storage.scale, true, 0.1);
+            storage.settings.scale = helpers.roundToFraction(val, 100);
+            inputScale.value = `${helpers.roundToFraction(val, 100)}`;
+        }, storage.settings.scale, true, 0.1);
+        helpers.createNumericInput(inputBgOpacity, (val) => {
+            storage.settings.bgOpacity = helpers.roundToFraction(val, 100);
+            inputBgOpacity.value = `${helpers.roundToFraction(val, 100)}`;
+        }, storage.settings.bgOpacity, true, 0, 1, 0.05);
+        helpers.createNumericInput(inputBgUnclippedOpacity, (val) => {
+            storage.settings.bgUnclippedOpacity = helpers.roundToFraction(val, 100);
+            inputBgUnclippedOpacity.value = `${helpers.roundToFraction(val, 100)}`;
+        }, storage.settings.bgUnclippedOpacity, true, 0, 1, 0.05);
     });
 </script>
 
 <section class="controlsContainer">
     <div class="controlSection baseControls">
-        <p>Workspace</p>
+        <p>{localisationTexts.controls.workspace}</p>
         <div class="innerContainer">
             <div class="entries">
                 <div class="controlEntry double">
-                    <p>Box size</p>
+                    <p>{localisationTexts.controls.boxSize}</p>
                     <div class="controlBox titled">
-                        <p>Width:</p>
+                        <p>{localisationTexts.controls.width}:</p>
                         <input bind:this={inputWidth} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
                     </div>
                     <div class="controlBox titled">
-                        <p>Height:</p>
+                        <p>{localisationTexts.controls.height}:</p>
                         <input bind:this={inputHeight} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
                     </div>
                 </div>
                 <div class="controlEntry single">
-                    <p>External work area size:</p>
+                    <p>{localisationTexts.controls.externalSize}:</p>
                     <div class="controlBox">
                         <input bind:this={inputOuterPadding} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
                     </div>
                 </div>
                 <div class="controlEntry double">
-                    <p>Grid</p>
+                    <p>{localisationTexts.controls.grid}</p>
                     <div class="controlBox titled">
-                        <p>Grid size:</p>
+                        <p>{localisationTexts.controls.gridSize}:</p>
                         <input bind:this={inputGridSize} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
                     </div>
                     <div class="controlBox titled">
-                        <p>Grid visiblity:</p>
-                        <Checkbox bind:selected={storage.gridVisible}></Checkbox>
+                        <p>{localisationTexts.controls.gridVisibility}:</p>
+                        <Checkbox bind:selected={storage.settings.gridVisible}></Checkbox>
                     </div>
-                    <p class="hint"><span class="hintTitle">Hint:</span> <span>hold</span> <span class="btnName"><span class="btnTextName">Shift</span> <span class="btnIcon">&#8679;</span></span> <span>while dragging to make points snap to grid.</span></p>
                 </div>
                 <div class="controlEntry single">
-                    <p>Scale:</p>
+                    <p>{localisationTexts.controls.scale}:</p>
                     <div class="controlBox">
                         <input bind:this={inputScale} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
                     </div>
                 </div>
-                <div class="controlEntry single longInput">
-                    <p>Background:</p>
-                    <div class="controlBox">
-                        <input bind:value={storage.bg} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                <div class="controlEntry multi longInput">
+                    <p>{localisationTexts.controls.bgSettings}</p>
+                    <div class="controlBox titled longInput">
+                        <p>{localisationTexts.controls.bg}:</p>
+                        <input bind:value={storage.settings.bg} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                    </div>
+                    <div class="controlBox titled">
+                        <p>{localisationTexts.controls.bgOpacity}:</p>
+                        <input bind:this={inputBgOpacity} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                    </div>
+                    <div class="controlBox titled">
+                        <p>{localisationTexts.controls.bgShowUnclipped}:</p>
+                        <Checkbox bind:selected={storage.settings.bgShowUnclipped}></Checkbox>
+                    </div>
+                    <div class="controlBox titled">
+                        <p>{localisationTexts.controls.bgUnclippedOpacity}:</p>
+                        <input bind:this={inputBgUnclippedOpacity} type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="controlSection pointsControls">
-        <p>Points</p>
+        <p>{localisationTexts.controls.points}</p>
         <div class="innerContainer">
             <div class="entries">
                 <button class="addBtn" onclick={() => { handleClickAddPoint(0) }}>+</button>
                 {#each storage.points as point, index }
-                    <ControlPoint id={index} hue='{Math.round(360/storage.points.length) * index}deg'></ControlPoint>
+                    <ControlPoint bind:storage={storage} id={index} hue='{Math.round(360/storage.points.length) * index}deg'></ControlPoint>
                     <button class="addBtn" onclick={() => { handleClickAddPoint(index+1) }}>+</button>
                 {/each}
             </div>

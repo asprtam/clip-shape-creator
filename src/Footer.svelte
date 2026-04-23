@@ -1,5 +1,12 @@
+<script>
+    import { localisationTexts, parseLocalisationText } from "./lib/localisationTexts.svelte";
+
+    let parsedFontText = $derived.by(() => {
+        return parseLocalisationText(localisationTexts.footer.fontTakenFrom, {'name': 'Menlo'});
+    });
+</script>
 <footer class="footer">
-    <p>Check the repo <a href="https://github.com/asprtam/clip-shape-creator">https://github.com/asprtam/clip-shape-creator</a></p>
-    <p>Inspired by <a href="https://bennettfeely.com/clippy/">https://bennettfeely.com/clippy/</a></p>
-    <p>Menlo font taken from <a href="http://www.onlinewebfonts.com/fonts">Web Fonts</a> is licensed by CC BY 4.0</p>
+    <p>{localisationTexts.footer.checkTheRepo} <a href="https://github.com/asprtam/clip-shape-creator">https://github.com/asprtam/clip-shape-creator</a></p>
+    <p>{localisationTexts.footer.inspiredBy} <a href="https://bennettfeely.com/clippy/">https://bennettfeely.com/clippy/</a></p>
+    <p>{parsedFontText} <a href="http://www.onlinewebfonts.com/fonts">Web Fonts</a> {localisationTexts.footer.isLicensed}</p>
 </footer>
