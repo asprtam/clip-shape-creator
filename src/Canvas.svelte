@@ -15,6 +15,20 @@
         return storage.settings.outerPadding + (Math.floor(storage.settings.imgSize.width / storage.settings.gridSize) * storage.settings.gridSize);
     });
 
+    /** @type {Array<Boolean>} */
+    let draggingTable = $state((() => { return new Array(storage.points.length * 2).fill(false).map(() => { return false; }) })());
+
+    $effect(() => {
+        if(draggingTable.length != storage.points.length * 2) {
+            draggingTable = new Array(storage.points.length * 2).fill(false).map(() => { return false; });
+        }
+        if(draggingTable.includes(true)) {
+            isDragging = true;
+        } else {
+            isDragging = false;
+        }
+    });
+
 </script>
 
 <section class="canvasContainer{isDragging ? ' dragging' : ''}">
@@ -45,14 +59,14 @@
         {/if}
         <div class="points" style="width: {storage.settings.imgSize.width}px; height: {storage.settings.imgSize.height}px; position: absolute; left: {storage.settings.outerPadding}px; top: {storage.settings.outerPadding}px;">
             {#if storage.points.length > 1}
-                <CanvasPoint btnPress={btnPress} storage={storage} bind:isDragging={isDragging} id={0} prevId={storage.points.length - 1} nextId={1} type='point'></CanvasPoint>
-                <CanvasPoint btnPress={btnPress} storage={storage} bind:isDragging={isDragging} id={0} prevId={storage.points.length - 1} nextId={1} type='with'></CanvasPoint>
-                <CanvasPoint btnPress={btnPress} storage={storage} bind:isDragging={isDragging} id={storage.points.length - 1} prevId={storage.points.length - 2} nextId={0} type='point'></CanvasPoint>
-                <CanvasPoint btnPress={btnPress} storage={storage} bind:isDragging={isDragging} id={storage.points.length - 1} prevId={storage.points.length - 2} nextId={0} type='with'></CanvasPoint>
+                <CanvasPoint btnPress={btnPress} storage={storage} bind:isDragging={draggingTable[0]} isDraggingSibling={false} id={0} prevId={storage.points.length - 1} nextId={1} type='point'></CanvasPoint>
+                <CanvasPoint btnPress={btnPress} storage={storage} bind:isDragging={draggingTable[storage.points.length]} isDraggingSibling={false} id={0} prevId={storage.points.length - 1} nextId={1} type='with'></CanvasPoint>
+                <CanvasPoint btnPress={btnPress} storage={storage} bind:isDragging={draggingTable[storage.points.length - 1]} isDraggingSibling={false} id={storage.points.length - 1} prevId={storage.points.length - 2} nextId={0} type='point'></CanvasPoint>
+                <CanvasPoint btnPress={btnPress} storage={storage} bind:isDragging={draggingTable[(storage.points.length * 2) - 1]} isDraggingSibling={false} id={storage.points.length - 1} prevId={storage.points.length - 2} nextId={0} type='with'></CanvasPoint>
             {/if}
             {#each { length: storage.points.length - 2 }, index }
-                <CanvasPoint btnPress={btnPress} storage={storage} bind:isDragging={isDragging} id={index + 1} prevId={index} nextId={index + 2} type='point'></CanvasPoint>
-                <CanvasPoint btnPress={btnPress} storage={storage} bind:isDragging={isDragging} id={index + 1} prevId={index} nextId={index + 2} type='with'></CanvasPoint>
+                <CanvasPoint btnPress={btnPress} storage={storage} bind:isDragging={draggingTable[index + 1]} isDraggingSibling={false} id={index + 1} prevId={index} nextId={index + 2} type='point'></CanvasPoint>
+                <CanvasPoint btnPress={btnPress} storage={storage} bind:isDragging={draggingTable[(index + 1) + storage.points.length]} isDraggingSibling={false} id={index + 1} prevId={index} nextId={index + 2} type='with'></CanvasPoint>
             {/each}
         </div>
     </section>

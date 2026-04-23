@@ -1,14 +1,16 @@
 <script>
     import { onMount } from 'svelte';
+    import getHue from './lib/hueRule.svelte';
     import { getPointCords, translateCords } from "./lib/toShape.svelte";
     import helpers from './lib/helpers.svelte';
-    /** @type {{id: Number, prevId: Number, nextId: Number, isDragging: Boolean, type: 'point'|'with', 'storage': import('./storage.svelte.js').Storage, btnPress: { shift: Boolean, ctrl: Boolean, alt: Boolean } }} */
-    let { id, prevId, nextId, isDragging = $bindable(false), type, storage = $bindable(null), btnPress } = $props();
-    let isThisDragging = $state(false);
+    /** @type {{id: Number, prevId: Number, nextId: Number, isDragging: Boolean, type: 'point'|'with', 'storage': import('./storage.svelte.js').Storage, btnPress: { shift: Boolean, ctrl: Boolean, alt: Boolean }, isDraggingSibling: Boolean }} */
+    let { id, prevId, nextId, isDragging = $bindable(), type, storage = $bindable(null), btnPress, isDraggingSibling } = $props();
     let hasEvent = { mousedown: false, mouseup: false, mousemove: false };
     /** @type {HTMLElement} */
     let element = $state();
     let prevClientPos = { x: 0, y: 0 };
+    let isMouseOver = $state(false);
+    let isMouseOverLine = $state(false);
     // svelte-ignore state_referenced_locally
     let draggingStartPos = $state(storage.points[id].pos);
 
@@ -170,7 +172,6 @@
      */
     const handleMousedown = (e) => {
         if(!isDragging) {
-            isThisDragging = true;
             isDragging = true;
             if(type == 'point') {
                 draggingStartPos = storage.points[id].pos;
@@ -178,7 +179,7 @@
                 draggingStartPos = storage.points[id].with;
             }
             prevClientPos = { x: e.clientX, y: e.clientY };
-            switchEvents();
+            switchDragEvents();
         }
     }
 
@@ -186,10 +187,9 @@
      * @param {MouseEvent} e
      */
     const handleMouseup = (e) => {
-        isThisDragging = false;
         isDragging = false;
         prevClientPos = { x: 0, y: 0 };
-        setupEvents();
+        setupDragEvents();
     }
 
     /**
@@ -282,7 +282,7 @@
         }
     }
 
-    const setupEvents = () => { 
+    const setupDragEvents = () => { 
         if(hasEvent.mouseup) {
             hasEvent.mouseup = false;
             document.body.removeEventListener('mouseup', handleMouseup);
@@ -301,7 +301,7 @@
         }
     }
 
-    const switchEvents = () => {
+    const switchDragEvents = () => {
         if(!hasEvent.mousemove) {
             hasEvent.mousemove = true;
             document.body.addEventListener('mousemove', handleMousemove);
@@ -320,18 +320,77 @@
         }
     }
 
+    const handleMouseOver = () => {
+        if(!isDragging && !isDraggingSibling && !isMouseOver) {
+            isMouseOver = true;
+        }
+    }
+
+    const handleMouseOut = () => {
+        if(!isDragging && !isDraggingSibling && isMouseOver) {
+            isMouseOver = false;
+        }
+    }
+
+    const handleMouseOverLine = () => {
+        if(!isDragging && !isDraggingSibling && !isMouseOverLine) {
+            isMouseOverLine = true;
+        }
+    }
+
+    const handleMouseOutLine = () => {
+        if(!isDragging && !isDraggingSibling && isMouseOverLine) {
+            isMouseOverLine = false;
+        }
+    }
+
     onMount(() => {
-        setupEvents();
+        setupDragEvents();
     });
 </script>
 
-<div class="canvasPoint {type} {type}-{id}{isThisDragging ? ' dragging' : ''}" style="--hue: {Math.round(360/storage.points.length) * id}deg; left: {realPositon.left}px; top: {realPositon.top}px;" bind:this={element}>
-    <div class="tooltip">
-        <span class="x"><span class="cordType">x: </span><span class="value">{tooltipCords.x}</span></span>
-        <span class="y"><span class="cordType">y: </span><span class="value">{tooltipCords.y}</span></span>
-    </div>
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_mouse_events_have_key_events -->
+<div 
+    class="canvasPoint {type} {type}-{id}{isDragging ? ' dragging' : isDraggingSibling ? ' draggingSibling' : isMouseOver ? ' hover' : isMouseOverLine ? ' hoverLine' : ''}"
+    style="
+            --hue: {getHue(storage.points.length, id)}deg;
+            left: {realPositon.left}px;
+            top: {realPositon.top}px;
+        "
+    onmouseover={handleMouseOver} onmouseout={handleMouseOut}
+    bind:this={element}
+    >
+        <div class="tooltip">
+            <span class="x"><span class="cordType">x: </span><span class="value">{tooltipCords.x}</span></span>
+            <span class="y"><span class="cordType">y: </span><span class="value">{tooltipCords.y}</span></span>
+        </div>
 </div>
 {#if type == 'with'}
-    <div class="pointingLine prevPoint pointingLine-prevPoint-{id}" style="--hue: {Math.round(360/storage.points.length) * id}deg; --hue2: {Math.round(360/storage.points.length) * prevId}deg; left: {realPositon.left}px; top: {realPositon.top}px; width: {Math.sqrt(Math.pow(pointingLinePrevPointSize.width, 2) + Math.pow(pointingLinePrevPointSize.height, 2))}px; --rotation: {((Math.atan2(pointingLinePrevPointSize.height, pointingLinePrevPointSize.width) * 180) / Math.PI) + 180}deg;"></div>
-    <div class="pointingLine pointingLine-{id}" style="--hue: {Math.round(360/storage.points.length) * id}deg; left: {realPositon.left}px; top: {realPositon.top}px; width: {Math.sqrt(Math.pow(pointingLineSize.width, 2) + Math.pow(pointingLineSize.height, 2))}px; --rotation: {((Math.atan2(pointingLineSize.height, pointingLineSize.width) * 180) / Math.PI) + 180}deg;"></div>
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <!-- svelte-ignore a11y_mouse_events_have_key_events -->
+    <div 
+    class="pointingLine prevPoint pointingLine-prevPoint-{id}{isDragging ? ' dragging' : isDraggingSibling ? ' draggingSibling' : isMouseOverLine ? ' hover' : isMouseOver ? 'hoverParent' : ''}"
+    style="
+            --hue: {getHue(storage.points.length, id)}deg;
+            --hue2: {getHue(storage.points.length, prevId)}deg;
+            left: {realPositon.left}px; top: {realPositon.top}px;
+            width: {Math.sqrt(Math.pow(pointingLinePrevPointSize.width, 2) + Math.pow(pointingLinePrevPointSize.height, 2))}px;
+            --rotation: {((Math.atan2(pointingLinePrevPointSize.height, pointingLinePrevPointSize.width) * 180) / Math.PI) + 180}deg;
+        "
+    onmouseover={handleMouseOver} onmouseout={handleMouseOut}
+    ></div>
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <!-- svelte-ignore a11y_mouse_events_have_key_events -->
+    <div 
+    class="pointingLine pointingLine-{id}{isDragging ? ' dragging' : isDraggingSibling ? ' draggingSibling' : isMouseOverLine ? ' hover' : ''}"
+    style="
+            --hue: {getHue(storage.points.length, id)}deg;
+            left: {realPositon.left}px;
+            top: {realPositon.top}px;
+            width: {Math.sqrt(Math.pow(pointingLineSize.width, 2) + Math.pow(pointingLineSize.height, 2))}px;
+            --rotation: {((Math.atan2(pointingLineSize.height, pointingLineSize.width) * 180) / Math.PI) + 180}deg;
+        "
+    onmouseover={handleMouseOver} onmouseout={handleMouseOut}
+    ></div>
 {/if}
