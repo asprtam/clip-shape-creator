@@ -11,16 +11,20 @@ const PositionTypes = { 'percent': 'Percents', 'middle': 'PX from middle', 'star
  * @template {Creator.positionType} xType
  * @template {Creator.positionType} yType
  * @typedef {Object} Creator.point
- * @property {xType & Creator.positionType} xPositionType
- * @property {yType & Creator.positionType} yPositionType
- * @property {{x: Number, y: Number}} pos
- * @property {{x: Number, y: Number}} with
+ * @property {{x: Number, y: Number, xPositionType: xType & Creator.positionType, yPositionType: yType & Creator.positionType}} pos
+ * @property {{x: Number, y: Number, xPositionType: xType & Creator.positionType, yPositionType: yType & Creator.positionType}} with
  * @memberof Creator
  */
 
 /**
  * @template {{[id: String]: *}} T
  * @typedef {{'=>': {[key in keyof T]: T[key]}}} TG.StealHisLook
+ * @memberof TG
+ */
+
+/**
+ * @template {{[id: String]: *}} T
+ * @typedef {{'=>': {[key in keyof T]?: T[key]}}} TG.StealHisLookOptional
  * @memberof TG
  */
 

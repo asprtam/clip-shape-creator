@@ -15,6 +15,59 @@ class Storage {
     /** @type {CookieManger} */
     #cookieManager = $state();
 
+    get cookieManager() {
+        return this.#cookieManager;
+    }
+
+    set cookieManager(cm) {
+        this.#getSettingsFromCookies(cm);
+        this.#cookieManager = cm;
+    }
+
+    /**
+     * @param {CookieManger} cookieManger
+     */
+    #getSettingsFromCookies = (cookieManger) => {
+        let allCookies = cookieManger.getAll();
+        Object.keys(allCookies).forEach((key) => {
+            switch(typeof this.#defaultSettings[key]) {
+                case "string": {
+                    this.settings[key] = allCookies[key];
+                    break;
+                }
+                case "number": {
+                    if(!isNaN(Number(allCookies[key]))) {
+                        this.settings[key] = Number(allCookies[key]);
+                    }
+                    break;
+                }
+                case "boolean": {
+                    switch(allCookies[key].trim().toLowerCase()) {
+                        case 'true': {
+                            this.settings[key] = true;
+                            break;
+                        }
+                        case 'false': {
+                            this.settings[key] = false;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        });
+        if(allCookies['imgSize_width']) {
+            if(!isNaN(Number(allCookies['imgSize_width']))) {
+                this.settings.imgSize.width = Number(allCookies['imgSize_width']);
+            }
+        }
+        if(allCookies['imgSize_height']) {
+            if(!isNaN(Number(allCookies['imgSize_height']))) {
+                this.settings.imgSize.height = Number(allCookies['imgSize_height']);
+            }
+        }
+    }
+
     get settings() {
         if(!this.#proxyObject) {
             /** @type {{[key in keyof Creator.settings]: (Creator.settings)[key]}} */ //@ts-ignore
@@ -42,7 +95,7 @@ class Storage {
                         },
                         set: (val) => {
                             if(this.#defaultSettings[key] == val) {
-                                this.#settings[key] == undefined;
+                                this.#settings[key] = undefined;
                                 if (this.#cookieManager) {
                                     this.#cookieManager.remove(key);
                                 }
@@ -141,22 +194,16 @@ class Storage {
     /** @type {Array<Creator.point<Creator.positionType, Creator.positionType>>} */
     points = $state([
         {
-            xPositionType: 'percent',
-            yPositionType: 'percent',
-            pos: { x: 0, y: 100 },
-            with: { x: 0, y: 100 }
+            pos: { x: 0, y: 100, xPositionType: 'percent', yPositionType: 'percent', },
+            with: { x: 0, y: 100, xPositionType: 'percent', yPositionType: 'percent', }
         },
         {
-            xPositionType: 'percent',
-            yPositionType: 'percent',
-            pos: { x: 50, y: 0},
-            with: { x: 0, y: 50 }
+            pos: { x: 50, y: 0, xPositionType: 'percent', yPositionType: 'percent', },
+            with: { x: 0, y: 50, xPositionType: 'percent', yPositionType: 'percent', }
         },
         {
-            xPositionType: 'percent',
-            yPositionType: 'percent',
-            pos: { x: 100, y: 100 },
-            with: { x: 100, y: 50 }
+            pos: { x: 100, y: 100, xPositionType: 'percent', yPositionType: 'percent', },
+            with: { x: 100, y: 50, xPositionType: 'percent', yPositionType: 'percent', }
         }
     ]);
 
@@ -167,35 +214,7 @@ class Storage {
     constructor(defaultSettings, cookieManger) {
         this.#defaultSettings = defaultSettings;
         if(cookieManger) {
-            let allCookies = cookieManger.getAll();
-            Object.keys(allCookies).filter((key) => { this.#defaultSettings[key] }).forEach((key) => {
-                switch (typeof this.#defaultSettings[key]) {
-                    case "string": {
-                        this.settings[key] = allCookies[key];
-                        break;
-                    }
-                    case "number": {
-                        if(!isNaN(Number(allCookies[key]))) {
-                            this.settings[key] = Number(allCookies[key]);
-                        }
-                        break;
-                    }
-                    case "boolean": {
-                        switch(allCookies[key].trim().toLowerCase()) {
-                            case 'true': {
-                                this.settings[key] = true;
-                                break;
-                            }
-                            case 'false': {
-                                this.settings[key] = false;
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-            });
-            if(allCookies['img'])
+            this.#getSettingsFromCookies(cookieManger);
             this.#cookieManager = cookieManger;
         }
     }
@@ -211,6 +230,7 @@ const defaultSettings = {
     scale: 3,
     gridSize: 5,
     gridVisible: true,
+    hintsClosed: false
 }
 
 export { Storage, defaultSettings };

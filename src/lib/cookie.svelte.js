@@ -80,9 +80,17 @@ class CookieManger {
     
     set accepted(value) {
         switch (value) {
-            case "accepted":
+            case "accepted": {
+                this.#accepted = value;
+                Cookie.set('cookie_consent', value, 5);
+                break;
+            }
             case "declined": {
                 this.#accepted = value;
+                Object.keys(Cookie.getAll()).forEach((key) => {
+                    Cookie.remove(key);
+                });
+                Cookie.set('cookie_consent', value, 5);
                 break;
             }
         }
@@ -91,7 +99,6 @@ class CookieManger {
     /** @returns {{[id:String]:String}} */
     getAll = () => {
         if(this.#accepted == 'accepted') {
-            console.log(Cookie.getAll());
             return Cookie.getAll();
         }
         return {};
@@ -128,11 +135,11 @@ class CookieManger {
     constructor() {
         switch (Cookie.get('cookie_consent')) {
             case 'accepted': {
-                this.accepted = 'accepted';
+                this.#accepted = 'accepted';
                 break;
             }
             case 'declined': {
-                this.accepted = 'declined';
+                this.#accepted = 'declined';
                 break;
             }
         }

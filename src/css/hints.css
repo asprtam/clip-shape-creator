@@ -1,0 +1,116 @@
+.dragging .hintsContainer, .dragging .hintsContainer * {
+    user-select: none;
+    pointer-events: none;
+    touch-action: none;
+}
+
+.hintsContainer {
+    background: #262b30;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: rgba(255, 255, 255, 0.4) 2px 2px 5px -2px inset, rgba(0, 0, 0, 0.5) -2px -2px 5px -2px inset;
+}
+
+.hintsContainer .innerContainer {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+.hintsContainer .innerContainer h3 {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.hintsContainer .hints {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: rgba(255, 255, 255, 0.2) -2px -2px 5px -2px inset, rgba(0, 0, 0, 0.5) 2px 2px 5px -2px inset;
+}
+
+.hintsContainer .hints .hintEntry {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: rgba(255, 255, 255, 0.4) 2px 2px 5px -2px inset, rgba(0, 0, 0, 0.5) -2px -2px 5px -2px inset;
+}
+
+.hintsContainer .hints .hintEntry.wip {
+    opacity: 0.3;
+}
+
+p.hint {
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.2em;
+}
+
+:not(.hintEntry) > p.hint {
+    white-space: nowrap;
+}
+
+p.hint .hintTitle {
+    font-weight: 400;
+    color: #f8eebf;
+}
+
+p.hint .bracket {
+    color: #c7cdd4;
+}
+
+p.hint .misc {
+    color: #b1b9c2;
+}
+
+p.hint .technical, p.hint .technical.bracket, p.hint .technical.misc {
+    font-size: 13px;
+    color: #878f98;
+}
+
+p.hint .btnName {
+    display: inline-block;
+    padding: 2px 4px;
+    box-shadow: rgba(255, 255, 255, 0.4) 1.5px 1.5px 1.5px -1px inset, rgba(0, 0, 0, 0.5) -1.5px -1.5px 1.5px -1px inset;
+    border-radius: 3px;
+    vertical-align: text-bottom;
+    font-size: 12px;
+    line-height: 12px;
+}
+
+.closeHints, .showHintsBtn {
+    display: inline-block;
+    padding: 3px 10px;
+    box-shadow: rgba(255, 255, 255, 0.4) 1.5px 1.5px 1.5px -1px inset, rgba(0, 0, 0, 0.5) -1.5px -1.5px 1.5px -1px inset;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.showHintsBtn {
+    background: hsla(120deg 100% 70% / 0.3);
+}
+
+.showHintsBtn:hover {
+    background: hsla(120deg 100% 75% / 0.4);
+}
+
+.closeHints {
+    background: hsla(0deg 100% 70% / 0.3);
+}
+
+.closeHints:hover {
+    background: hsla(0deg 100% 75% / 0.4);
+}

@@ -1,29 +1,9 @@
 <script>
+    import { localisationTexts } from "./lib/localisationTexts.svelte";
     import { onMount } from 'svelte';
     /** @type {{cookiesAccpeted: 'accepted'|'declined'|null }} */
     let { cookiesAccpeted = $bindable(null) } = $props();
-    import { cubicInOut } from 'svelte/easing';
-
-    /**
-     * 
-     * @param {HTMLElement} node
-     * @param {{delay?: Number, duration?: Number, easing?: (t:Number) => Number }} params
-     */
-    const slideBanner = (node, { delay = 0, duration = 200, easing = cubicInOut }) => {
-        const finalHeight = node.offsetHeight;
-        return {
-            delay: delay || 0,
-            duration: duration || 200,
-            easing: easing || cubicInOut,
-            /**
-             * @param {Number} t
-             * @param {Number} u
-             */
-            css: (t, u) => {
-                return `overflow: hidden; height: ${finalHeight * t}px;`;
-            }
-        }
-    }
+    import { slideBanner } from './lib/customAnimations';
     /** @type {HTMLElement} */
     let btnAccept = $state();
     /** @type {HTMLElement} */
@@ -45,10 +25,10 @@
 
 <section in:slideBanner={{}} out:slideBanner={{}} class="cookieBanner">
     <div class="innerContent">
-        <p>We use cookies to save your editor settings <span class="bracket">(</span><span class="misc">e.g. background, grid, size</span><span class="bracket">)</span>. No tracking or personal data is collected.</p>
+        <p>{localisationTexts.cookieBanner.weUse} <span class="bracket">(</span><span class="misc">{localisationTexts.cookieBanner.misc}</span><span class="bracket">)</span>. {localisationTexts.cookieBanner.noTrack}</p>
         <div class="btnsRow">
-            <button id="acceptCookie" bind:this={btnAccept} class="accept">Accept</button>
-            <button id="declineCookie" bind:this={btnDecline}  class="decline">Decline</button>
+            <button id="acceptCookie" bind:this={btnAccept} class="accept">{localisationTexts.cookieBanner.accept}</button>
+            <button id="declineCookie" bind:this={btnDecline}  class="decline">{localisationTexts.cookieBanner.decline}</button>
         </div>
     </div>
 </section>
