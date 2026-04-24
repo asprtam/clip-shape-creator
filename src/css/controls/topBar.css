@@ -1,0 +1,81 @@
+.topBar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    column-gap: 10px;
+}
+
+.dragging .topBar, .dragging .topBar * {
+    user-select: none;
+    pointer-events: none;
+    touch-action: none;
+}
+
+.closeHints, .showHintsBtn {
+    display: inline-block;
+    padding: 3px 10px;
+    box-shadow: rgba(255, 255, 255, 0.4) 1.5px 1.5px 1.5px -1px inset, rgba(0, 0, 0, 0.5) -1.5px -1.5px 1.5px -1px inset;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.showHintsBtn {
+    background: hsla(120deg 100% 70% / 0.3);
+}
+
+.showHintsBtn:hover {
+    background: hsla(120deg 100% 75% / 0.4);
+}
+
+.closeHints {
+    background: hsla(0deg 100% 70% / 0.3);
+}
+
+.closeHints:hover {
+    background: hsla(0deg 100% 75% / 0.4);
+}
+
+.dropdownContainer.langMenu {
+    display: inline-block;
+    z-index: 999999;
+    height: 21.5px;
+    cursor: pointer;
+    width: 34.5px;
+}
+
+.dropdownContainer.langMenu .dropdownPlaceholder {
+    display: block;
+}
+
+.dropdownContainer.langMenu .dropdownPlaceholder::before, .dropdownContainer.langMenu .dropdownPlaceholder::after {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    content: '';
+    left: 0px;
+    top: 0px;
+    border-radius: 4px;
+}
+
+.dropdownContainer.langMenu .dropdownPlaceholder::before {
+    background: #EBE1E1;
+}
+
+.dropdownContainer.langMenu .dropdownPlaceholder::after {
+    box-shadow: rgba(210, 204, 204, 0.7) 1.5px 1.5px 1.5px -1px inset, rgba(0, 0, 0, 0.7) -1.5px -1.5px 1.5px -1px inset;
+    background: var(--bg, transparent);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.dropdownContainer.langMenu .dropdownPlaceholder .placeholderTextContent {
+    display: none;
+}
+
+.dropdownContainer.langMenu .dropdownMenu {
+    left: 100% !important;
+    transform: translateX(-100%) !important;
+}

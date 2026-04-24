@@ -1,8 +1,8 @@
 <script>
-    import { localisationTexts } from "./lib/localisationTexts.svelte";
+    /** @typedef {typeof import('./lib/localisationTexts.svelte.js').localisationEN} locType */
     import { onMount } from 'svelte';
-    /** @type {{cookiesAccpeted: 'accepted'|'declined'|null }} */
-    let { cookiesAccpeted = $bindable(null) } = $props();
+    /** @type {{cookiesAccpeted: 'accepted'|'declined'|null, localisationTexts: locType }} */
+    let { cookiesAccpeted = $bindable(null), localisationTexts } = $props();
     import { slideBanner } from './lib/customAnimations';
     /** @type {HTMLElement} */
     let btnAccept = $state();

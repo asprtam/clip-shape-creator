@@ -138,6 +138,70 @@ const helpers = {
         }
 
         return (count * _multiplicity) / Math.pow(10, multiplicityFractions);
+    },
+    /**
+     * generuje unikalne id (nie powtarzane w obrebie jednej strony/zadania), id moze byc poprzedzone i zakonczone podanym ciagiem znakow
+     * @param {number} [length=10] - długośc id
+     * @param {string} [startWith=''] - początkowy ciąg znaków
+     * @param {string} [endWith=''] - końcowy ciąg znaków
+     * @param {('all'|'lowercase'|'uppercase'|'none')} [charcase='all'] - jakich znaków uzywać w tworzonym id
+     * @param {Boolean} [allowNumbers=true] - czy uzywać liczb
+     * @param {Array<String>} [checkArr]
+     * @returns {string}
+     */
+    makeId: (length = 10, startWith = '', endWith = '', charcase = 'all', allowNumbers = true, checkArr = []) => {
+        let make = (_length) => {
+            let result = '';
+            let characters = '';
+            switch(charcase) {
+                case "all":
+                case "lowercase": {
+                    characters += 'abcdefghijklmnopqrstuvwxyz';
+                    if(charcase == 'lowercase') {
+                        break;
+                    }
+                }
+                case "uppercase": {
+                    characters += 'ABCDEFGHIJKLMNOPQRSTUVXYZ';
+                    break;
+                }
+            }
+            if(allowNumbers) {
+                characters += '0123456789';
+            }
+            if(characters.length == 0) {
+                characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVXYZ0123456789';
+            }
+            const charactersLength = characters.length;
+            let counter = 0;
+            while(counter < _length) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+                counter += 1;
+            }
+            return result;
+        }
+        let testId = `${startWith}${make(length)}${endWith}`;
+        if(checkArr.includes(testId)) {
+            return helpers.makeId(length, startWith, endWith);
+        } else {
+            return testId;
+        }
+    },
+    /**
+     * zwraca pozycje elementu w odniesieniu do wybranego elementu, korzystajac z funkcji getBoundingClientRect(), bedzie wiec brac pod uwage transform
+     * @param {HTMLElement} element - element którego pozycję chcemy uzyskać
+     * @param {HTMLElement} element2 - element względem którego pozycję chcemy uzyskać
+     * @param {Boolean} [round=true]
+     * @returns {{width: Number, height: Number, left: Number, top: Number}}
+     */
+    getPositionRelativeTo: (element, element2, round = true) => {
+        let mainElBounds = element2.getBoundingClientRect();
+        let rectBounds = element.getBoundingClientRect();
+        if(round) {
+            return { left: helpers.roundToFraction((rectBounds.left - mainElBounds.left)), top: helpers.roundToFraction((rectBounds.top - mainElBounds.top)), width: helpers.roundToFraction(rectBounds.width), height: helpers.roundToFraction(rectBounds.height) };
+        }
+        return { left: (rectBounds.left - mainElBounds.left), top: (rectBounds.top - mainElBounds.top), width: rectBounds.width, height: rectBounds.height };
     }
-}
+};
+
 export default helpers;

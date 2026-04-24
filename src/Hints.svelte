@@ -1,7 +1,8 @@
 <script>
-    import { localisationTexts, parseLocalisationText } from "./lib/localisationTexts.svelte";
-    /** @type {{closed: Boolean}} */
-    let { closed = $bindable(false) } = $props();
+    /** @typedef {typeof import('./lib/localisationTexts.svelte.js').localisationEN} locType */
+    import { parseLocalisationText } from "./lib/localisationTexts.svelte";
+    /** @type {{closed: Boolean, localisationTexts: locType }} */
+    let { closed = $bindable(false), localisationTexts } = $props();
     import { slideBannerWithOpacity } from './lib/customAnimations';
     let isMac = $derived.by(() => {
         return /Mac/gmi.test(window.navigator.userAgent.slice(window.navigator.userAgent.indexOf('(') + 1, window.navigator.userAgent.indexOf(')')));
@@ -42,9 +43,7 @@
     });
 </script>
 
-{#if closed}
-    <button class="showHintsBtn" id="showHints" onclick={() => { closed = false; }}>{localisationTexts.hints.show}</button>
-{:else}
+{#if !closed}
     <section class="hintsContainer" in:slideBannerWithOpacity={{}} out:slideBannerWithOpacity={{}}>
         <div class="innerContainer">
             <h3>{localisationTexts.hints.hints} </h3>

@@ -1,6 +1,9 @@
 //@ts-ignore
 import { Creator, TG } from "./types.js";
+import { getSystemDefinedLocalisation } from "./lib/localisationTexts.svelte.js";
+
 /** @typedef {import('./lib/cookie.svelte.js').CookieManger} CookieManger */
+/** @typedef {ReturnType<import('./lib/localisationTexts.svelte.js').getSystemDefinedLocalisation>} langs */
 
 class Storage {
     /** @type {{[key in keyof Creator.settings]: (Creator.settings)[key]}} */ //ts-ignore
@@ -230,7 +233,9 @@ const defaultSettings = {
     scale: 3,
     gridSize: 5,
     gridVisible: true,
-    hintsClosed: false
+    hintsClosed: false,
+    /** @type {ReturnType<import('./lib/localisationTexts.svelte.js').getSystemDefinedLocalisation>} */
+    lang: getSystemDefinedLocalisation()
 }
 
 export { Storage, defaultSettings };

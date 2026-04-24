@@ -8,7 +8,8 @@
   import Footer from "./Footer.svelte";
   import { CookieManger } from "./lib/cookie.svelte";
   import CookieBanner from "./CookieBanner.svelte";
-  import Hints from "./Hints.svelte";
+  import TopBar from "./TopBar.svelte";
+  import { localisationEN, otherLocalisations } from "./lib/localisationTexts.svelte";
 
   let btnPress = $state({
     shift: false,
@@ -31,6 +32,16 @@
       }, 200);
     });
   }
+
+  /** @type {typeof localisationEN} */
+  let localisationTexts = $derived.by(() => {
+    if(otherLocalisations[storage.settings.lang]) {
+      if(otherLocalisations[storage.settings.lang].texts) {
+        return otherLocalisations[storage.settings.lang].texts;
+      }
+    }
+    return localisationEN;
+  });
 
   onMount(() => {
     document.body.addEventListener('keydown', (e) => {
@@ -95,16 +106,16 @@
 </script>
 
 <main class="{isDragging ? 'dragging' : ''}{btnPress.ctrl ? ' controlPressed' : ''}">
-  <Controls bind:storage={storage}></Controls>
+  <Controls localisationTexts={localisationTexts} bind:storage={storage}></Controls>
   <Output imgSize={storage.settings.imgSize} points={storage.points}></Output>
   <Canvas btnPress={btnPress} bind:storage={storage} bind:isDragging={isDragging} clipPath={currentClipPath}></Canvas>
-  <Footer></Footer>
+  <Footer localisationTexts={localisationTexts} ></Footer>
   <!-- svelte-ignore block_empty -->
   {#await bannerTimeout()}
   {:then done} 
       {#if cookieManager.accepted == null}
-        <CookieBanner bind:cookiesAccpeted={cookieManager.accepted}></CookieBanner>
+        <CookieBanner localisationTexts={localisationTexts} bind:cookiesAccpeted={cookieManager.accepted}></CookieBanner>
     {/if}
   {/await}
-  <Hints bind:closed={storage.settings.hintsClosed}></Hints>
+  <TopBar localisationTexts={localisationTexts} bind:settings={storage.settings}></TopBar>
 </main>

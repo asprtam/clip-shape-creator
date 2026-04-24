@@ -6,11 +6,11 @@
     import ControlPoint from "./ControlPoint.svelte";
     import Checkbox from "./lib/Checkbox.svelte";
     import { translateCords } from './lib/toShape.svelte';
-    import { localisationTexts } from "./lib/localisationTexts.svelte";
+    /** @typedef {typeof import('./lib/localisationTexts.svelte.js').localisationEN} locType */
     import getHue from './lib/hueRule.svelte';
 
-    /** @type {{'storage': import('./storage.svelte.js').Storage}} */
-    let { storage = $bindable(null) } = $props(); 
+    /** @type {{'storage': import('./storage.svelte.js').Storage, localisationTexts: locType }} */
+    let { storage = $bindable(null), localisationTexts } = $props(); 
 
     /** @type {HTMLInputElement} */
     let inputWidth = $state();
@@ -158,7 +158,7 @@
             <div class="entries">
                 <button class="addBtn" onclick={() => { handleClickAddPoint(0) }}>+</button>
                 {#each storage.points as point, index }
-                    <ControlPoint bind:storage={storage} id={index} hue='{getHue(storage.points.length, index)}deg'></ControlPoint>
+                    <ControlPoint localisationTexts={localisationTexts} bind:storage={storage} id={index} hue='{getHue(storage.points.length, index)}deg'></ControlPoint>
                     <button class="addBtn" onclick={() => { handleClickAddPoint(index+1) }}>+</button>
                 {/each}
             </div>
