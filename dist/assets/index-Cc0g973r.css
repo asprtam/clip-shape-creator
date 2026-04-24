@@ -620,7 +620,7 @@ body *, body *::before, body *::after {
     left: 0px;
 }
 
-.showHintsBtn {
+.topBar {
     position: fixed;
     z-index: 5;
     right: 10px;
@@ -634,6 +634,107 @@ body *, body *::before, body *::after {
     right: 10px;
     height: fit-content;
     width: var(--hintContainerWidth, 0px);
+}
+
+.dropdownContainer .dropdownMenu {
+    will-change: filter;
+    transition: filter 0.2s ease-in-out;
+}
+
+.dropdownContainer select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.dropdownContainer.open .dropdownMenu {
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5))
+}
+
+.dropdownContainer .dropdownMenuList {
+    list-style-type: none;
+    width: fit-content;
+    padding: 5px;
+    position: absolute;
+    box-sizing: border-box;
+    top: 0px;
+    left: 0px;
+    background: #232628;
+    border-radius: 5px;
+    box-shadow: rgba(255, 255, 255, 0.2) 1px 1px 3px -1px inset, rgba(0, 0, 0, 0.5) -1px -1px 3px -1px inset;
+}
+
+.dropdownContainer .dropdownMenuList::before {
+    position: absolute;
+    z-index: 1;
+    height: calc(100% - 10px);
+    width: calc(100% - 10px);
+    left: 5px;
+    top: 5px;
+    content: '';
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: rgba(255, 255, 255, 0.2) -1px -1px 3px -1px inset, rgba(0, 0, 0, 0.5) 1px 1px 3px -1px inset;
+}
+
+.dropdownContainer .dropdownMenuList li {
+    position: relative;
+    font-family: "Menlo Regular", "Menlo", 'Courier New', Courier, monospace;
+    font-size: 12px;
+    box-sizing: border-box;
+    padding: 0px 5px 0px 15px;
+    line-height: 20px;
+    transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
+    width: 100%;
+    white-space: nowrap;
+    z-index: 2;
+    text-align: left;
+    letter-spacing: -0.25%;
+    user-select: none;
+}
+
+.dropdownContainer .dropdownMenuList li:is(.selected, .selected-hover)::before {
+    content: '✓';
+    font-family: "Menlo Regular", "Menlo", 'Courier New', Courier, monospace;
+    font-size: 12px;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translate(0%, -50%);
+}
+
+.dropdownContainer .dropdownMenuList li:is(.selected-hover, .hover) {
+    background: #7698c240;
+}
+
+.dropdownContainer .dropdownMenuList li:first-child {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.dropdownContainer .dropdownMenuList li:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.dropdownContainer .dropdownMenu .dropdownMenuInner {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.dropdownContainer .dropdownMenuList li :is(.bracket, .misc) {
+    line-height: 20px;
+    font-size: 10px;
+    letter-spacing: -0.5px;
+}
+
+.dropdownContainer .dropdownMenuList li .bracket {
+    opacity: 0.85;
+}
+
+.dropdownContainer .dropdownMenuList li .misc {
+    opacity: 0.7;
 }
 
 .dragging .controlsContainer, .dragging .controlsContainer * {
@@ -784,14 +885,32 @@ body *, body *::before, body *::after {
     align-content: center;
 }
 
-.controlsContainer .entries .controlBox :is(input, select):not([type="checkbox"]) {
+.controlsContainer .entries .controlBox :is(input):not([type="checkbox"]),
+.controlsContainer .entries .controlBox :is(select):not(.dropdownContainerFakeSelect),
+.controlsContainer .entries .controlBox .dropdownContainer {
     box-sizing: border-box;
     padding: 1px 5px;
     box-shadow: rgba(255, 255, 255, 0.4) -2px -2px 5px -2px inset, rgba(0, 0, 0, 0.7) 2px 2px 5px -2px inset;
-    font-size: 12px;
     border-radius: 5px;
     background: rgba(255, 255, 255, 0.25);
+}
+
+.controlsContainer .entries .controlBox :is(input):not([type="checkbox"]),
+.controlsContainer .entries .controlBox :is(select):not(.dropdownContainerFakeSelect),
+.controlsContainer .entries .controlBox .dropdownContainer .dropdownContainerFakeSelect,
+.controlsContainer .entries .controlBox .dropdownContainer .dropdownPlaceholder {
     font-family: "Menlo Regular", "Menlo", 'Courier New', Courier, monospace;
+    font-size: 12px;
+}
+
+.controlsContainer .entries .controlBox .dropdownContainer .dropdownPlaceholder {
+    box-sizing: border-box;
+    padding: 1px 5px;
+    text-align: center;
+}
+
+.controlsContainer .entries .controlBox .dropdownContainer .dropdownPlaceholder :is(.bracket, .misc) {
+    display: none;
 }
 
 .controlsContainer .entries .controlBox :is(input):not([type="checkbox"]) {
@@ -799,12 +918,28 @@ body *, body *::before, body *::after {
     text-align: center;
 }
 
-.controlsContainer .entries .controlBox select {
-    width: 100px;
-    text-align: center;
+.controlsContainer .entries .controlBox select, .controlsContainer .entries .controlBox .dropdownContainer .dropdownMenuList {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+}
+
+.controlsContainer .entries .controlBox select {
+    text-align: center;
+}
+
+.controlsContainer .entries .controlBox .dropdownContainer .dropdownMenu {
+    z-index: 9999999999;
+}
+
+.controlsContainer .entries .controlBox select:not(.dropdownContainerFakeSelect),
+.controlsContainer .entries .controlBox .dropdownContainer {
+    width: 100px;
+}
+
+.controlsContainer .entries .controlBox .dropdownContainer {
+    cursor: pointer;
+    height: 16px;
 }
 
 .controlsContainer .entries .controlBox p {
@@ -1435,6 +1570,20 @@ p.hint .btnName {
     line-height: 12px;
 }
 
+.topBar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    column-gap: 10px;
+}
+
+.dragging .topBar, .dragging .topBar * {
+    user-select: none;
+    pointer-events: none;
+    touch-action: none;
+}
+
 .closeHints, .showHintsBtn {
     display: inline-block;
     padding: 3px 10px;
@@ -1458,4 +1607,47 @@ p.hint .btnName {
 
 .closeHints:hover {
     background: hsla(0deg 100% 75% / 0.4);
+}
+
+.dropdownContainer.langMenu {
+    display: inline-block;
+    z-index: 999999;
+    height: 21.5px;
+    cursor: pointer;
+    width: 34.5px;
+}
+
+.dropdownContainer.langMenu .dropdownPlaceholder {
+    display: block;
+}
+
+.dropdownContainer.langMenu .dropdownPlaceholder::before, .dropdownContainer.langMenu .dropdownPlaceholder::after {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    content: '';
+    left: 0px;
+    top: 0px;
+    border-radius: 4px;
+}
+
+.dropdownContainer.langMenu .dropdownPlaceholder::before {
+    background: #EBE1E1;
+}
+
+.dropdownContainer.langMenu .dropdownPlaceholder::after {
+    box-shadow: rgba(210, 204, 204, 0.7) 1.5px 1.5px 1.5px -1px inset, rgba(0, 0, 0, 0.7) -1.5px -1.5px 1.5px -1px inset;
+    background: var(--bg, transparent);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.dropdownContainer.langMenu .dropdownPlaceholder .placeholderTextContent {
+    display: none;
+}
+
+.dropdownContainer.langMenu .dropdownMenu {
+    left: 100% !important;
+    transform: translateX(-100%) !important;
 }
