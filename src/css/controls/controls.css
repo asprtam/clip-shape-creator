@@ -146,14 +146,32 @@
     align-content: center;
 }
 
-.controlsContainer .entries .controlBox :is(input, select):not([type="checkbox"]) {
+.controlsContainer .entries .controlBox :is(input):not([type="checkbox"]),
+.controlsContainer .entries .controlBox :is(select):not(.dropdownContainerFakeSelect),
+.controlsContainer .entries .controlBox .dropdownContainer {
     box-sizing: border-box;
     padding: 1px 5px;
     box-shadow: rgba(255, 255, 255, 0.4) -2px -2px 5px -2px inset, rgba(0, 0, 0, 0.7) 2px 2px 5px -2px inset;
-    font-size: 12px;
     border-radius: 5px;
     background: rgba(255, 255, 255, 0.25);
+}
+
+.controlsContainer .entries .controlBox :is(input):not([type="checkbox"]),
+.controlsContainer .entries .controlBox :is(select):not(.dropdownContainerFakeSelect),
+.controlsContainer .entries .controlBox .dropdownContainer .dropdownContainerFakeSelect,
+.controlsContainer .entries .controlBox .dropdownContainer .dropdownPlaceholder {
     font-family: "Menlo Regular", "Menlo", 'Courier New', Courier, monospace;
+    font-size: 12px;
+}
+
+.controlsContainer .entries .controlBox .dropdownContainer .dropdownPlaceholder {
+    box-sizing: border-box;
+    padding: 1px 5px;
+    text-align: center;
+}
+
+.controlsContainer .entries .controlBox .dropdownContainer .dropdownPlaceholder :is(.bracket, .misc) {
+    display: none;
 }
 
 .controlsContainer .entries .controlBox :is(input):not([type="checkbox"]) {
@@ -161,12 +179,29 @@
     text-align: center;
 }
 
-.controlsContainer .entries .controlBox select {
-    width: 100px;
-    text-align: center;
+.controlsContainer .entries .controlBox select, .controlsContainer .entries .controlBox .dropdownContainer .dropdownMenuList {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+}
+
+.controlsContainer .entries .controlBox select {
+    text-align: center;
+}
+
+.controlsContainer .entries .controlBox .dropdownContainer .dropdownMenu {
+    z-index: 9999999999;
+}
+
+
+.controlsContainer .entries .controlBox select:not(.dropdownContainerFakeSelect),
+.controlsContainer .entries .controlBox .dropdownContainer {
+    width: 100px;
+}
+
+.controlsContainer .entries .controlBox .dropdownContainer {
+    cursor: pointer;
+    height: 16px;
 }
 
 .controlsContainer .entries .controlBox p {

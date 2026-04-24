@@ -43,7 +43,7 @@
     left: 0px;
 }
 
-.showHintsBtn {
+.topBar {
     position: fixed;
     z-index: 5;
     right: 10px;

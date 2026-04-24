@@ -1,0 +1,100 @@
+.dropdownContainer .dropdownMenu {
+    will-change: filter;
+    transition: filter 0.2s ease-in-out;
+}
+
+.dropdownContainer select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.dropdownContainer.open .dropdownMenu {
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5))
+}
+
+.dropdownContainer .dropdownMenuList {
+    list-style-type: none;
+    width: fit-content;
+    padding: 5px;
+    position: absolute;
+    box-sizing: border-box;
+    top: 0px;
+    left: 0px;
+    background: #232628;
+    border-radius: 5px;
+    box-shadow: rgba(255, 255, 255, 0.2) 1px 1px 3px -1px inset, rgba(0, 0, 0, 0.5) -1px -1px 3px -1px inset;
+}
+
+.dropdownContainer .dropdownMenuList::before {
+    position: absolute;
+    z-index: 1;
+    height: calc(100% - 10px);
+    width: calc(100% - 10px);
+    left: 5px;
+    top: 5px;
+    content: '';
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: rgba(255, 255, 255, 0.2) -1px -1px 3px -1px inset, rgba(0, 0, 0, 0.5) 1px 1px 3px -1px inset;
+}
+
+.dropdownContainer .dropdownMenuList li {
+    position: relative;
+    font-family: "Menlo Regular", "Menlo", 'Courier New', Courier, monospace;
+    font-size: 12px;
+    box-sizing: border-box;
+    padding: 0px 5px 0px 15px;
+    line-height: 20px;
+    transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
+    width: 100%;
+    white-space: nowrap;
+    z-index: 2;
+    text-align: left;
+    letter-spacing: -0.25%;
+    user-select: none;
+}
+
+.dropdownContainer .dropdownMenuList li:is(.selected, .selected-hover)::before {
+    content: '✓';
+    font-family: "Menlo Regular", "Menlo", 'Courier New', Courier, monospace;
+    font-size: 12px;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translate(0%, -50%);
+}
+
+.dropdownContainer .dropdownMenuList li:is(.selected-hover, .hover) {
+    background: #7698c240;
+}
+
+.dropdownContainer .dropdownMenuList li:first-child {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.dropdownContainer .dropdownMenuList li:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.dropdownContainer .dropdownMenu .dropdownMenuInner {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.dropdownContainer .dropdownMenuList li :is(.bracket, .misc) {
+    line-height: 20px;
+    font-size: 10px;
+    letter-spacing: -0.5px;
+}
+
+.dropdownContainer .dropdownMenuList li .bracket {
+    opacity: 0.85;
+}
+
+.dropdownContainer .dropdownMenuList li .misc {
+    opacity: 0.7;
+}

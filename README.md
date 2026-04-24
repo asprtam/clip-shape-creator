@@ -15,3 +15,6 @@ Saddly popular Clippy doen't support the shape() function. So I created this pro
 
 ## Feel free to request new functionalities and open issues.
 Feedback is more than welcome.
+
+### Note
+All localisations except English and Polish are made automatically, feel free to report errors.

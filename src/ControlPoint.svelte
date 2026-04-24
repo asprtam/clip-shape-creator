@@ -4,9 +4,10 @@
     import { translateCords } from "./lib/toShape.svelte";
     import helpers from './lib/helpers.svelte';
     import { onMount } from "svelte";
-    import { localisationTexts } from "./lib/localisationTexts.svelte";
-    /** @type {{id: Number, hue: String, storage: import('./storage.svelte.js').Storage}} */
-    let { id, hue, storage = $bindable(null) } = $props();
+    /** @typedef {typeof import('./lib/localisationTexts.svelte.js').localisationEN} locType */
+    import Dropdown from "./lib/Dropdown.svelte";
+    /** @type {{id: Number, hue: String, storage: import('./storage.svelte.js').Storage, localisationTexts: locType}} */
+    let { id, hue, storage = $bindable(null), localisationTexts } = $props();
 
     /** @type {HTMLInputElement} */
     let inputX = $state();
@@ -39,6 +40,16 @@
     let withXpositionType = $state(storage.points[id].with.xPositionType);
     // svelte-ignore state_referenced_locally
     let withYpositionType = $state(storage.points[id].with.yPositionType);
+
+    /** @type {{[key in keyof PositionTypes]: { classList?: Array<String>, css?: String, text?: String }}}*/
+    let positionTypeOptions = $derived.by(() => {
+        /** @type {{[key in keyof PositionTypes]: { classList?: Array<String>, css?: String, text?: String }}}*/ //@ts-ignore
+        let retObj = {};
+        Object.keys(PositionTypes).forEach((type) => {
+            retObj[type] = { text: localisationTexts.calcTypes[type] };
+        });
+        return(retObj);
+    });
 
     /**
      * @param {HTMLSelectElement} element
@@ -143,11 +154,13 @@
             </div>
             <div class="controlBox titled">
                 <p>{localisationTexts.controls.calcType}:</p>
-                <select bind:value={posXpositionType} onchange={() => { handleChangeCalcType(this, true, true, posXpositionType) }}>
+                <Dropdown options={positionTypeOptions} defaultValue={posXpositionType} bind:value={posXpositionType} onChange={() => { handleChangeCalcType(this, true, true, posXpositionType) }}>
+                </Dropdown>
+                <!-- <select bind:value={posXpositionType} onchange={() => { handleChangeCalcType(this, true, true, posXpositionType) }}>
                     {#each Object.keys(PositionTypes) as type}
                         <option value={type}>{localisationTexts.calcTypes[type]}</option>
                     {/each}
-                </select>
+                </select> -->
             </div>
         </div>
         <div class="controlEntry double">
@@ -158,11 +171,13 @@
             </div>
             <div class="controlBox titled">
                 <p>{localisationTexts.controls.calcType}:</p>
-                <select bind:value={posYpositionType} onchange={() => { handleChangeCalcType(this, true, false, posYpositionType) }}>
+                <Dropdown options={positionTypeOptions} defaultValue={posYpositionType} bind:value={posYpositionType} onChange={() => { handleChangeCalcType(this, true, false, posYpositionType) }}>
+                </Dropdown>
+                <!-- <select bind:value={posYpositionType} onchange={() => { handleChangeCalcType(this, true, false, posYpositionType) }}>
                     {#each Object.keys(PositionTypes) as type}
                         <option value={type}>{localisationTexts.calcTypes[type]}</option>
                     {/each}
-                </select>
+                </select> -->
             </div>
         </div>
     </div>
@@ -176,11 +191,13 @@
             </div>
             <div class="controlBox titled">
                 <p>{localisationTexts.controls.calcType}:</p>
-                <select bind:value={withXpositionType} onchange={() => { handleChangeCalcType(this, false, true, withXpositionType) }}>
+                <Dropdown options={positionTypeOptions} defaultValue={withXpositionType} bind:value={withXpositionType} onChange={() => { handleChangeCalcType(this, false, true, withXpositionType) }}>
+                </Dropdown>
+                <!-- <select bind:value={withXpositionType} onchange={() => { handleChangeCalcType(this, false, true, withXpositionType) }}>
                     {#each Object.keys(PositionTypes) as type}
                         <option value={type}>{localisationTexts.calcTypes[type]}</option>
                     {/each}
-                </select>
+                </select> -->
             </div>
         </div>
         <div class="controlEntry double">
@@ -191,11 +208,13 @@
             </div>
             <div class="controlBox titled">
                 <p>{localisationTexts.controls.calcType}:</p>
-                <select bind:value={withYpositionType} onchange={() => { handleChangeCalcType(this, false, false, withYpositionType) }}>
+                <Dropdown options={positionTypeOptions} defaultValue={withYpositionType} bind:value={withYpositionType} onChange={() => { handleChangeCalcType(this, false, false, withYpositionType) }}>
+                </Dropdown>
+                <!-- <select bind:value={withYpositionType} onchange={() => { handleChangeCalcType(this, false, false, withYpositionType) }}>
                     {#each Object.keys(PositionTypes) as type}
                         <option value={type}>{localisationTexts.calcTypes[type]}</option>
                     {/each}
-                </select>
+                </select> -->
             </div>
         </div>
     </div>

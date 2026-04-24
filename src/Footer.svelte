@@ -1,5 +1,9 @@
 <script>
-    import { localisationTexts, parseLocalisationText } from "./lib/localisationTexts.svelte";
+    /** @typedef {typeof import('./lib/localisationTexts.svelte.js').localisationEN} locType */
+    import { parseLocalisationText } from "./lib/localisationTexts.svelte";
+
+    /** @type {{localisationTexts: locType}}*/
+    let { localisationTexts } = $props();
 
     let parsedFontText = $derived.by(() => {
         return parseLocalisationText(localisationTexts.footer.fontTakenFrom, {'name': 'Menlo'});

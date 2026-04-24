@@ -59,7 +59,7 @@ const translateCords = (srcCords, requiredTypes = { xPositionType: 'percent', yP
                         break;
                     }
                     case "end": {
-                        cords.x = helpers.roundToFraction(srcCords.x - imgSize.width);
+                        cords.x = helpers.roundToFraction(imgSize.width + srcCords.x);
                         break;
                     }
                 }
@@ -131,7 +131,7 @@ const translateCords = (srcCords, requiredTypes = { xPositionType: 'percent', yP
                         break;
                     }
                     case "end": {
-                        cords.y = helpers.roundToFraction(srcCords.y - imgSize.height);
+                        cords.y = helpers.roundToFraction(imgSize.height + srcCords.y);
                         break;
                     }
                 }

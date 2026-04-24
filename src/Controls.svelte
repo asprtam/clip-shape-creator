@@ -1,13 +1,16 @@
-<script>
+<script> //@ts-ignore
+    import { Creator } from './types';
     import { onMount } from 'svelte';
     import helpers from './lib/helpers.svelte';
     import Storage from './storage.svelte';
     import ControlPoint from "./ControlPoint.svelte";
     import Checkbox from "./lib/Checkbox.svelte";
-    import { localisationTexts } from "./lib/localisationTexts.svelte";
+    import { translateCords } from './lib/toShape.svelte';
+    /** @typedef {typeof import('./lib/localisationTexts.svelte.js').localisationEN} locType */
+    import getHue from './lib/hueRule.svelte';
 
-    /** @type {{'storage': import('./storage.svelte.js').Storage}} */
-    let { storage = $bindable(null) } = $props(); 
+    /** @type {{'storage': import('./storage.svelte.js').Storage, localisationTexts: locType }} */
+    let { storage = $bindable(null), localisationTexts } = $props(); 
 
     /** @type {HTMLInputElement} */
     let inputWidth = $state();
@@ -27,19 +30,31 @@
     /** @param {Number} pos */
     const handleClickAddPoint = (pos) => {
         if(pos <= 0) {
+            let translatedPrev = translateCords(storage.points[storage.points.length - 1].pos, { xPositionType: 'percent', yPositionType: 'percent' });
+            let translatedNext = translateCords(storage.points[0].pos, { xPositionType: 'percent', yPositionType: 'percent' });
+            /** @type {{x: Number, y: Number, xPositionType: Creator.positionType, yPositionType: Creator.positionType }} */
+            let position = { x: (translatedPrev.x + translatedNext.x) / 2, y: (translatedPrev.y + translatedNext.y) / 2, xPositionType: 'percent', yPositionType: 'percent' };
             storage.points.unshift({
-                pos: { x: 50, y: 50, xPositionType: 'percent', yPositionType: 'percent', },
-                with: { x: 50, y: 50, xPositionType: 'percent', yPositionType: 'percent', },
+                pos: position,
+                with: position,
             });
         } else if(pos >= storage.points.length) {
+            let translatedPrev = translateCords(storage.points[storage.points.length - 1].pos, { xPositionType: 'percent', yPositionType: 'percent' });
+            let translatedNext = translateCords(storage.points[0].pos, { xPositionType: 'percent', yPositionType: 'percent' });
+            /** @type {{x: Number, y: Number, xPositionType: Creator.positionType, yPositionType: Creator.positionType }} */
+            let position = { x: (translatedPrev.x + translatedNext.x) / 2, y: (translatedPrev.y + translatedNext.y) / 2, xPositionType: 'percent', yPositionType: 'percent' };
             storage.points.push({
-                pos: { x: 50, y: 50, xPositionType: 'percent', yPositionType: 'percent', },
-                with: { x: 50, y: 50, xPositionType: 'percent', yPositionType: 'percent', },
+                pos: position,
+                with: position,
             });
         } else {
+            let translatedPrev = translateCords(storage.points[pos - 1].pos, { xPositionType: 'percent', yPositionType: 'percent' });
+            let translatedNext = translateCords(storage.points[pos].pos, { xPositionType: 'percent', yPositionType: 'percent' });
+            /** @type {{x: Number, y: Number, xPositionType: Creator.positionType, yPositionType: Creator.positionType }} */
+            let position = { x: (translatedPrev.x + translatedNext.x) / 2, y: (translatedPrev.y + translatedNext.y) / 2, xPositionType: 'percent', yPositionType: 'percent' };
             storage.points = storage.points.slice(0, pos).concat([{
-                pos: { x: 50, y: 50, xPositionType: 'percent', yPositionType: 'percent', },
-                with: { x: 50, y: 50, xPositionType: 'percent', yPositionType: 'percent', },
+                pos: position,
+                with: position,
             }]).concat(storage.points.slice(pos));
         }
     }
@@ -143,7 +158,7 @@
             <div class="entries">
                 <button class="addBtn" onclick={() => { handleClickAddPoint(0) }}>+</button>
                 {#each storage.points as point, index }
-                    <ControlPoint bind:storage={storage} id={index} hue='{Math.round(360/storage.points.length) * index}deg'></ControlPoint>
+                    <ControlPoint localisationTexts={localisationTexts} bind:storage={storage} id={index} hue='{getHue(storage.points.length, index)}deg'></ControlPoint>
                     <button class="addBtn" onclick={() => { handleClickAddPoint(index+1) }}>+</button>
                 {/each}
             </div>
